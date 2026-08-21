@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>SRQ Operations Scorecard · Horizon MLS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy-900:#0E2350;
+    --navy-800:#173E72;
+    --navy-700:#245291;
+    --navy-600:#3568AC;
+    --navy-100:#E7ECF5;
+    --gold-500:#E8892B;
+    --gold-400:#F2A94A;
+    --orange-500:#E8892B;
+    --orange-600:#D3701A;
+    --bg:#F2F4F9;
+    --surface:#FFFFFF;
+    --ink-900:#0F172A;
+    --ink-600:#4B5768;
+    --ink-400:#94A0B4;
+    --border:#E3E7F0;
+    --success:#1E9D5B;
+    --success-bg:#E7F7EE;
+    --danger:#D6483F;
+    --danger-bg:#FCEBE9;
+    --warning:#B9790A;
+    --warning-bg:#FCF3DC;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(10,31,68,0.06), 0 8px 24px -12px rgba(10,31,68,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink-900);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .eyebrow{
+    font-family:'Barlow Condensed',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    font-weight:600;
+  }
+  h1,h2,h3,.display{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;
+    letter-spacing:.01em;
+  }
+  .tabular{ font-variant-numeric: tabular-nums; }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    background:linear-gradient(135deg,var(--navy-900) 0%,var(--navy-800) 55%,var(--navy-700) 100%);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(600px 200px at 85% -20%, rgba(232,137,43,0.25), transparent 60%),
+      radial-gradient(500px 260px at 100% 120%, rgba(242,169,74,0.18), transparent 60%);
+    pointer-events:none;
+  }
+  .masthead-inner{
+    position:relative;
+    max-width:1360px;
+    margin:0 auto;
+    padding:22px 28px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand-mark{
+    width:64px; height:40px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .brand-text{ line-height:1; }
+  .brand-text .mini-word{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:600;
+    font-size:11px;
+    letter-spacing:.24em;
+    color:#DCE4F3;
+    margin-bottom:1px;
+  }
+  .brand-text .wordmark{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;
+    font-size:26px;
+    letter-spacing:.02em;
+    line-height:0.95;
+    color:#fff;
+  }
+  .brand-text .sub{
+    font-size:10px;
+    letter-spacing:.14em;
+    color:#B9C6E0;
+    font-weight:600;
+    margin-top:4px;
+    text-transform:uppercase;
+  }
+  .brand-text .sub span{ color:var(--gold-400); }
+  .masthead-title{
+    text-align:center;
+    flex:1;
+    min-width:260px;
+  }
+  .masthead-title h1{
+    margin:0;
+    font-size:clamp(22px,3.2vw,32px);
+    line-height:1;
+    color:#fff;
+  }
+  .masthead-title .tagline{
+    margin-top:6px;
+    font-size:11px;
+    letter-spacing:.24em;
+    color:var(--gold-400);
+    font-weight:700;
+  }
+  .masthead-actions{ display:flex; align-items:center; gap:10px; }
+  .pill{
+    display:inline-flex; align-items:center; gap:7px;
+    padding:7px 13px;
+    border-radius:999px;
+    font-size:12px; font-weight:600;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.16);
+    color:#DCE4F3;
+    white-space:nowrap;
+  }
+  .pill .dot{ width:7px; height:7px; border-radius:50%; background:var(--ink-400); }
+  .pill.live .dot{ background:#33D17A; box-shadow:0 0 0 3px rgba(51,209,122,0.25); }
+  .pill.sample .dot{ background:var(--gold-400); box-shadow:0 0 0 3px rgba(239,193,59,0.25); }
+  .pill.offline .dot{ background:var(--danger); box-shadow:0 0 0 3px rgba(214,72,63,0.25); }
+
+  .btn{
+    font-family:inherit; font-size:13px; font-weight:600;
+    border-radius:10px; border:1px solid transparent;
+    padding:9px 15px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:7px;
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+    white-space:nowrap;
+  }
+  .btn:active{ transform:translateY(1px); }
+  .btn-gold{ background:linear-gradient(180deg,var(--gold-400),var(--gold-500)); color:#26210A; box-shadow:0 6px 14px -6px rgba(232,137,43,0.55); }
+  .btn-gold:hover{ box-shadow:0 8px 18px -6px rgba(232,137,43,0.7); }
+  .btn-ghost-dark{ background:rgba(255,255,255,0.08); color:#fff; border-color:rgba(255,255,255,0.18); }
+  .btn-ghost-dark:hover{ background:rgba(255,255,255,0.14); }
+  .btn-outline{ background:#fff; color:var(--navy-800); border-color:var(--border); }
+  .btn-outline:hover{ border-color:var(--navy-600); }
+  .btn-icon{ padding:9px 10px; }
+
+  /* ---------- Layout ---------- */
+  .wrap{ max-width:1360px; margin:0 auto; padding:22px 28px 60px; }
+
+  .controls{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:16px 18px;
+    display:flex; flex-wrap:wrap; gap:12px 16px;
+    align-items:flex-end;
+    margin-bottom:20px;
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-600); }
+  .field input, .field select{
+    font-family:inherit; font-size:13.5px;
+    padding:8px 10px; border-radius:9px; border:1px solid var(--border);
+    background:#fbfcfe; color:var(--ink-900); min-width:120px;
+  }
+  .field input:focus, .field select:focus{ outline:2px solid var(--navy-600); outline-offset:1px; }
+  .field.grow{ flex:1; min-width:200px; }
+  .field.grow input{ width:100%; }
+  .shift-toggle{ display:flex; gap:4px; background:#EEF1F8; padding:4px; border-radius:10px; }
+  .shift-toggle button{
+    border:none; background:transparent; padding:7px 12px; font-size:12.5px; font-weight:600;
+    border-radius:7px; cursor:pointer; color:var(--ink-600); font-family:inherit;
+  }
+  .shift-toggle button.active{ background:var(--navy-800); color:#fff; }
+  .controls-right{ display:flex; gap:10px; margin-left:auto; align-items:flex-end; flex-wrap:wrap; }
+
+  /* ---------- Alerts ---------- */
+  #alerts{ display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+  .alert{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 15px; border-radius:11px; font-size:13.5px; font-weight:600;
+    border:1px solid transparent;
+  }
+  .alert.warn{ background:var(--warning-bg); color:#7A5205; border-color:#F0DBA0; }
+  .alert.danger{ background:var(--danger-bg); color:#8F2E27; border-color:#F0C3BF; }
+  .alert .tag{
+    font-family:'Barlow Condensed',sans-serif; font-size:10.5px; letter-spacing:.1em;
+    padding:2px 8px; border-radius:999px; background:rgba(0,0,0,0.08); flex-shrink:0;
+  }
+
+  /* ---------- KPI Grid ---------- */
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:14px;
+    margin-bottom:22px;
+  }
+  .kpi-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .kpi-card .k-label{
+    font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--ink-600); display:flex; align-items:center; gap:6px; justify-content:space-between;
+  }
+  .kpi-card .k-value{
+    font-family:'Barlow Condensed',sans-serif; font-weight:700;
+    font-size:34px; line-height:1.15; color:var(--navy-900); margin-top:6px;
+  }
+  .kpi-card .k-sub{ font-size:11.5px; color:var(--ink-400); margin-top:3px; font-weight:500; }
+  .kpi-card.hero{
+    background:linear-gradient(135deg,var(--navy-800),var(--navy-700));
+    color:#fff; grid-column:span 2;
+    display:flex; align-items:center; gap:18px;
+  }
+  .kpi-card.hero .k-label{ color:#B9C6E0; }
+  .kpi-card.hero .k-value{ color:#fff; font-size:40px; }
+  .kpi-card.hero .k-sub{ color:#93A6C8; }
+  .calc-badge{
+    font-family:'Barlow Condensed',sans-serif; font-size:9.5px; letter-spacing:.08em;
+    background:rgba(239,193,59,0.18); color:var(--gold-400);
+    border:1px solid rgba(239,193,59,0.4);
+    padding:2px 7px; border-radius:999px; font-weight:700;
+  }
+  .gauge-wrap{ flex-shrink:0; position:relative; width:92px; height:92px; }
+  .gauge-wrap svg{ transform:rotate(-90deg); }
+  .gauge-wrap .gauge-num{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:15px; color:#fff;
+  }
+  .k-pct-bar{ height:5px; border-radius:99px; background:var(--navy-100); margin-top:9px; overflow:hidden; }
+  .k-pct-bar > div{ height:100%; border-radius:99px; background:linear-gradient(90deg,var(--gold-500),var(--gold-400)); }
+
+  /* ---------- Panels / Charts ---------- */
+  .panel-grid{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; margin-bottom:16px; }
+  .panel-grid.thirds{ grid-template-columns:1fr 1fr 1fr; }
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:18px 18px 14px;
+  }
+  .panel-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
+  .panel-head h3{ margin:0; font-size:17px; color:var(--navy-900); }
+  .panel-head .hint{ font-size:11.5px; color:var(--ink-400); font-weight:500; }
+  .chart-box{ position:relative; height:230px; }
+  .chart-box.tall{ height:270px; }
+  .legend-row{ display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:12px; color:var(--ink-600); font-weight:600; }
+  .legend-row .sw{ display:inline-flex; align-items:center; gap:6px; }
+  .legend-row .sw i{ width:10px; height:10px; border-radius:3px; display:inline-block; }
+
+  /* ---------- Table ---------- */
+  .table-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; }
+  .table-scroll{ overflow-x:auto; border:1px solid var(--border); border-radius:10px; }
+  table{ width:100%; border-collapse:collapse; font-size:12.8px; min-width:900px; }
+  thead th{
+    background:var(--navy-800); color:#fff; text-align:left; padding:10px 12px;
+    font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:12.5px; letter-spacing:.03em;
+    position:sticky; top:0;
+  }
+  tbody td{ padding:9px 12px; border-top:1px solid var(--border); color:var(--ink-900); white-space:nowrap; }
+  tbody tr:nth-child(even){ background:#FAFBFD; }
+  tbody tr:hover{ background:var(--navy-100); }
+  .table-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:var(--ink-600); }
+
+  footer.page-foot{ text-align:center; padding:26px 0 10px; color:var(--ink-400); font-size:12px; }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(7,21,49,0.55); display:none;
+    align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .modal-backdrop.open{ display:flex; }
+  .modal{
+    background:#fff; border-radius:16px; padding:24px; width:100%; max-width:460px;
+    box-shadow:0 24px 60px -20px rgba(7,21,49,0.5);
+  }
+  .modal h3{ margin:0 0 4px; color:var(--navy-900); }
+  .modal p.desc{ font-size:12.5px; color:var(--ink-600); margin:0 0 16px; }
+  .modal .field{ margin-bottom:14px; }
+  .modal .field input, .modal .field select{ width:100%; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:6px; }
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-top:1px solid var(--border); }
+  .toggle-row:first-of-type{ border-top:none; }
+  .switch{ position:relative; width:40px; height:22px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:#D6DCE8; border-radius:99px; cursor:pointer; transition:.15s; }
+  .slider::before{ content:""; position:absolute; width:16px; height:16px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.15s; box-shadow:0 1px 3px rgba(0,0,0,0.3); }
+  input:checked + .slider{ background:var(--navy-700); }
+  input:checked + .slider::before{ transform:translateX(18px); }
+  #connStatusLine{ font-size:12px; margin-top:2px; }
+  #connStatusLine.ok{ color:var(--success); }
+  #connStatusLine.err{ color:var(--danger); }
+
+  @media (max-width: 880px){
+    .panel-grid, .panel-grid.thirds{ grid-template-columns:1fr; }
+    .kpi-card.hero{ grid-column:span 2; flex-direction:row; }
+    .masthead-inner{ flex-direction:column; text-align:center; }
+    .masthead-actions{ width:100%; justify-content:center; }
+    .controls-right{ margin-left:0; width:100%; }
+  }
+  @media (max-width: 520px){
+    .kpi-grid{ grid-template-columns:repeat(2,1fr); }
+    .kpi-card.hero{ grid-column:span 2; }
+    .wrap{ padding:16px 14px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="64" height="40" viewBox="0 0 64 40" fill="none">
+          <defs>
+            <linearGradient id="swooshGrad" x1="4" y1="34" x2="60" y2="4" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#173E72"/>
+              <stop offset="55%" stop-color="#3568AC"/>
+              <stop offset="100%" stop-color="#F2A94A"/>
+            </linearGradient>
+          </defs>
+          <path d="M3 30 C 16 27, 26 18, 34 11 C 40 6.5, 47 4, 58 2.5 L 47.5 10.5 L 60 3 L 52.5 15 L 43.5 12.5 C 35.5 17.5, 25.5 25, 15.5 29.5 C 11.5 31.2, 7 31.7, 3 30 Z" fill="url(#swooshGrad)"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="mini-word">HORIZON</div>
+        <div class="wordmark">MLS</div>
+        <div class="sub">MANAGED <span>LABOR SOLUTIONS</span></div>
+      </div>
+    </div>
+
+    <div class="masthead-title">
+      <h1>SRQ OPERATIONS SCORECARD</h1>
+      <div class="tagline">FOCUSED · ACCOUNTABLE · DRIVEN TO EXCEL</div>
+    </div>
+
+    <div class="masthead-actions">
+      <span class="pill" id="connPill"><span class="dot"></span><span id="connPillText">Sample data</span></span>
+      <button class="btn btn-ghost-dark btn-icon" id="settingsBtn" title="Connection settings">⚙</button>
+      <a class="btn btn-gold" id="openFormBtn" href="#" target="_blank" rel="noopener">Open Scorecard Form ↗</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="field">
+      <label for="dateFrom">From</label>
+      <input type="date" id="dateFrom">
+    </div>
+    <div class="field">
+      <label for="dateTo">To</label>
+      <input type="date" id="dateTo">
+    </div>
+    <div class="field">
+      <label>Shift</label>
+      <div class="shift-toggle" id="shiftToggle">
+        <button data-shift="all" class="active">All</button>
+        <button data-shift="morning">Morning</button>
+        <button data-shift="afternoon">Afternoon</button>
+        <button data-shift="evening">Evening</button>
+      </div>
+    </div>
+    <div class="field grow">
+      <label for="searchBox">Search records</label>
+      <input type="text" id="searchBox" placeholder="Search any field…">
+    </div>
+    <div class="controls-right">
+      <div class="field">
+        <label for="autoRefresh">Auto-refresh</label>
+        <select id="autoRefresh">
+          <option value="0">Off</option>
+          <option value="1">Every 1 min</option>
+          <option value="5">Every 5 min</option>
+          <option value="15">Every 15 min</option>
+        </select>
+      </div>
+      <button class="btn btn-outline" id="refreshBtn">↻ Refresh</button>
+      <button class="btn btn-outline" id="exportBtn">⤓ Export CSV</button>
+    </div>
+  </div>
+
+  <div id="alerts"></div>
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- Charts row 1 -->
+  <div class="panel-grid">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Readyline &amp; QTA Trend</h3>
+        <span class="hint">By hour, latest shift day</span>
+      </div>
+      <div class="chart-box tall"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Vehicle Mix</h3>
+        <span class="hint">Latest snapshot</span>
+      </div>
+      <div class="chart-box tall"><canvas id="mixChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="panel-grid thirds">
+    <div class="panel">
+      <div class="panel-head"><h3>Staffing</h3></div>
+      <div class="chart-box"><canvas id="staffChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>Reservations vs Returns</h3></div>
+      <div class="chart-box"><canvas id="resChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>EV Charging</h3></div>
+      <div class="chart-box"><canvas id="evChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-panel">
+    <div class="panel-head">
+      <h3>All Scorecard Responses</h3>
+      <span class="hint" id="tableCount">0 records</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr id="tableHead"></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="table-foot">
+      <span id="lastUpdatedLine">Last updated —</span>
+      <span id="sourceLine">Source: sample data</span>
+    </div>
+  </div>
+
+  <footer class="page-foot">Horizon MLS · SRQ Operations Scorecard Dashboard</footer>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <h3>Connection Settings</h3>
+    <p class="desc">Point the dashboard at your Apps Script deployment. It automatically requests <code>?action=data</code> for records.</p>
+    <div class="field">
+      <label for="scriptUrl">Apps Script Web App URL</label>
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/…/exec">
+      <div id="connStatusLine"></div>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div style="font-weight:600;font-size:13.5px;">Use sample data</div>
+        <div style="font-size:11.5px;color:var(--ink-600);">Show demo data instead of a live connection</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="sampleToggle"><span class="slider"></span></label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="modalCancel">Cancel</button>
+      <button class="btn btn-gold" id="modalTest">Test &amp; Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------------------------------------------------------------
+  // Config / storage
+  // ---------------------------------------------------------------------
+  const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxrLqGS8qrktC9pXB-V7aLr-ErKkVEawCLq5e--prq6s5-H4_WGgKRTCHJeNPZseAp/exec";
+  const LS_KEY = "srqDashboardSettings";
+
+  function loadSettings(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    return { scriptUrl: DEFAULT_SCRIPT_URL, useSample: true, autoRefresh: 0 };
+  }
+  function saveSettings(s){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(s)); }catch(e){}
+  }
+
+  let settings = loadSettings();
+  let rawData = [];        // all records as returned/generated
+  let filtered = [];       // after filters
+  let refreshTimer = null;
+  let charts = {};
+
+  const NUM_FIELDS = ["Cleaners","Drivers","Large Equipment","SUV F-W-S","Specialty","Sedan","Pick Up",
+    "Returns Lot","QTA Dirty","QTA Clean","Reservations","Returns","EV Charged","EV Not Charged"];
+
+  const COLUMN_ORDER = ["Timestamp","Cleaners","Drivers","Large Equipment","SUV F-W-S","Specialty","Sedan",
+    "Pick Up","Returns Lot","QTA Dirty","QTA Clean","Reservations","Returns","EV Charged","EV Not Charged"];
+
+  // ---------------------------------------------------------------------
+  // Sample data generator
+  // ---------------------------------------------------------------------
+  function generateSampleData(){
+    const out = [];
+    const now = new Date();
+    const startHour = 6; // 6am
+    const endHour = 21;  // 9pm
+    for(let h = startHour; h <= endHour; h++){
+      const t = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, 0, 0);
+      const wave = Math.sin((h - startHour) / (endHour - startHour) * Math.PI); // 0..1..0
+      const jitter = () => Math.round((Math.random()-0.5)*4);
+
+      const largeEq = Math.max(2, Math.round(10 + wave*8 + jitter()));
+      const suv = Math.max(10, Math.round(30 + wave*20 + jitter()*2));
+      const specialty = Math.max(0, Math.round(2 + wave*3 + jitter()*0.3));
+      const sedan = Math.max(0, Math.round(3 + wave*4 + jitter()*0.3));
+      const pickup = Math.max(0, Math.round(1 + wave*2));
+      const qtaDirty = Math.max(0, Math.round(28 - wave*18 + jitter()*3));
+      const qtaClean = Math.max(0, Math.round(30 + wave*30 - jitter()*2));
+
+      out.push({
+        "Timestamp": (h<10?"0":"")+h + ":00:00 " + (now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear(),
+        "Cleaners": String(Math.max(1, Math.round(2 + wave*2))),
+        "Drivers": String(Math.max(1, Math.round(2 + wave*3))),
+        "Large Equipment": String(largeEq),
+        "SUV F-W-S": String(suv),
+        "Specialty": String(specialty),
+        "Sedan": String(sedan),
+        "Pick Up": String(pickup),
+        "Returns Lot": String(Math.max(0, Math.round(4 + wave*6))),
+        "QTA Dirty": String(qtaDirty),
+        "QTA Clean": String(qtaClean),
+        "Reservations": String(Math.max(0, Math.round(20 + wave*25))),
+        "Returns": String(Math.max(0, Math.round(15 + wave*15))),
+        "EV Charged": String(Math.max(0, Math.round(4 + wave*5))),
+        "EV Not Charged": String(Math.max(0, Math.round(3 - wave*2)))
+      });
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------------
+  // Data fetch
+  // ---------------------------------------------------------------------
+  function dataUrl(base){
+    const sep = base.indexOf("?") === -1 ? "?" : "&";
+    return base + sep + "action=data";
+  }
+
+  async function fetchLiveData(){
+    const url = dataUrl(settings.scriptUrl.trim());
+    const res = await fetch(url, { redirect: "follow" });
+    const text = await res.text();
+    let json;
+    try{
+      json = JSON.parse(text);
+    }catch(e){
+      throw new Error("The deployment returned HTML instead of JSON. Re-publish the Apps Script deployment so /exec?action=data is included, then try again.");
+    }
+    if(!json.success){
+      throw new Error(json.error || "The endpoint responded but reported an error.");
+    }
+    return json;
+  }
+
+  async function loadData(showSpinnerText){
+    setConnPill("loading");
+    try{
+      if(settings.useSample){
+        rawData = generateSampleData();
+        setConnPill("sample");
+        document.getElementById("sourceLine").textContent = "Source: sample data";
+      } else {
+        const json = await fetchLiveData();
+        rawData = (json.data || []).map(normalizeRecord);
+        setConnPill("live");
+        document.getElementById("sourceLine").textContent = "Source: " + (json.sheet || "live sheet") + " · " + (json.count!=null?json.count:rawData.length) + " rows";
+      }
+      document.getElementById("lastUpdatedLine").textContent = "Last updated " + new Date().toLocaleString();
+      applyFilters();
+    }catch(err){
+      setConnPill("offline");
+      document.getElementById("sourceLine").textContent = "Connection error";
+      renderAlerts([{level:"danger", tag:"CONNECTION", text: err.message}]);
+      // fall back to whatever we had, or sample, so the dashboard isn't empty
+      if(rawData.length === 0){
+        rawData = generateSampleData();
+        applyFilters(true);
+      }
+    }
+  }
+
+  function normalizeRecord(r){
+    const out = {};
+    COLUMN_ORDER.forEach(function(k){ out[k] = r[k] !== undefined ? r[k] : ""; });
+    // carry through any extra columns too
+    Object.keys(r).forEach(function(k){ if(!(k in out)) out[k] = r[k]; });
+    return out;
+  }
+
+  function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+  function parseTimestamp(ts){
+    if(!ts) return null;
+    const d = new Date(ts);
+    if(!isNaN(d.getTime())) return d;
+    // try M/d/yyyy h:mm:ss a manually as fallback
+    return null;
+  }
+
+  function shiftOf(date){
+    if(!date) return "unknown";
+    const h = date.getHours();
+    if(h < 12) return "morning";
+    if(h < 17) return "afternoon";
+    return "evening";
+  }
+
+  // ---------------------------------------------------------------------
+  // Filters
+  // ---------------------------------------------------------------------
+  let activeShift = "all";
+
+  function applyFilters(skipAlerts){
+    const from = document.getElementById("dateFrom").value;
+    const to = document.getElementById("dateTo").value;
+    const q = document.getElementById("searchBox").value.trim().toLowerCase();
+
+    filtered = rawData.filter(function(r){
+      const d = parseTimestamp(r["Timestamp"]);
+      if(from && d && d < new Date(from + "T00:00:00")) return false;
+      if(to && d && d > new Date(to + "T23:59:59")) return false;
+      if(activeShift !== "all" && d && shiftOf(d) !== activeShift) return false;
+      if(q){
+        const hay = Object.values(r).join(" ").toLowerCase();
+        if(hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+
+    renderAll(skipAlerts);
+  }
+
+  // ---------------------------------------------------------------------
+  // Derived metrics
+  // ---------------------------------------------------------------------
+  function latestRecord(list){
+    if(list.length === 0) return null;
+    const withDates = list.map(function(r){ return { r:r, d: parseTimestamp(r["Timestamp"]) }; });
+    withDates.sort(function(a,b){
+      if(a.d && b.d) return a.d - b.d;
+      return 0;
+    });
+    return withDates[withDates.length-1].r;
+  }
+
+  function computeMetrics(list){
+    const latest = latestRecord(list) || {};
+    const g = function(k){ return num(latest[k]); };
+
+    const cleaners = g("Cleaners");
+    const drivers = g("Drivers");
+    const largeEq = g("Large Equipment");
+    const suv = g("SUV F-W-S");
+    const specialty = g("Specialty");
+    const sedan = g("Sedan");
+    const pickup = g("Pick Up");
+    const qtaDirty = g("QTA Dirty");
+    const qtaClean = g("QTA Clean");
+    const reservations = g("Reservations");
+    const returns = g("Returns");
+    const returnsLot = g("Returns Lot");
+    const evCharged = g("EV Charged");
+    const evNotCharged = g("EV Not Charged");
+
+    const readyline = largeEq + suv + specialty + sedan + pickup;
+    const qtaTotal = qtaDirty + qtaClean;
+    const qtaReadiness = qtaTotal > 0 ? Math.round((qtaClean / qtaTotal) * 100) : 0;
+    const evTotal = evCharged + evNotCharged;
+    const evReadiness = evTotal > 0 ? Math.round((evCharged / evTotal) * 100) : 0;
+
+    return {
+      latest, cleaners, drivers, activeStaff: cleaners+drivers,
+      largeEq, suv, specialty, sedan, pickup, readyline,
+      qtaDirty, qtaClean, qtaReadiness,
+      reservations, returns, returnsLot,
+      evCharged, evNotCharged, evReadiness
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Rendering: KPI cards
+  // ---------------------------------------------------------------------
+  function gaugeSvg(pct, size){
+    size = size || 92;
+    const r = (size/2) - 8;
+    const c = 2*Math.PI*r;
+    const off = c * (1 - pct/100);
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">' +
+      '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke="rgba(255,255,255,0.15)" stroke-width="9" fill="none"/>' +
+      '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke="url(#gaugeGrad)" stroke-width="9" fill="none" ' +
+        'stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" stroke-linecap="round"/>' +
+      '<defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0%" stop-color="#E8892B"/><stop offset="100%" stop-color="#F2A94A"/>' +
+      '</linearGradient></defs></svg>';
+  }
+
+  function kpiCard(opts){
+    return '<div class="kpi-card'+(opts.hero?' hero':'')+'">' +
+      (opts.hero ? (
+        '<div class="gauge-wrap">'+gaugeSvg(opts.pct||0)+'<div class="gauge-num">'+(opts.pct!=null?opts.pct+'%':'')+'</div></div>' +
+        '<div><div class="k-label">'+opts.label+' <span class="calc-badge">CALCULATED</span></div>' +
+        '<div class="k-value tabular">'+opts.value+'</div>' +
+        '<div class="k-sub">'+opts.sub+'</div></div>'
+      ) : (
+        '<div class="k-label"><span>'+opts.label+'</span>'+(opts.badge?'<span class="calc-badge">'+opts.badge+'</span>':'')+'</div>' +
+        '<div class="k-value tabular">'+opts.value+'</div>' +
+        '<div class="k-sub">'+(opts.sub||'')+'</div>' +
+        (opts.pct!=null ? '<div class="k-pct-bar"><div style="width:'+opts.pct+'%"></div></div>' : '')
+      )) +
+      '</div>';
+  }
+
+  function renderKpis(m){
+    const el = document.getElementById("kpiGrid");
+    el.innerHTML =
+      kpiCard({hero:true, label:"Readyline Inventory", value:m.readyline, pct:m.qtaReadiness,
+               sub:"Large Equip + SUV F-W-S + Specialty + Sedan + Pick Up"}) +
+      kpiCard({label:"Total Active Staff", value:m.activeStaff, sub:m.cleaners+" cleaners · "+m.drivers+" drivers"}) +
+      kpiCard({label:"QTA Clean", value:m.qtaClean, sub:m.qtaDirty+" dirty on lot", pct:m.qtaReadiness}) +
+      kpiCard({label:"QTA Readiness", value:m.qtaReadiness+"%", sub:"Clean ÷ (Clean + Dirty)"}) +
+      kpiCard({label:"EV Charging Readiness", value:m.evReadiness+"%", sub:m.evCharged+" charged · "+m.evNotCharged+" not charged", pct:m.evReadiness}) +
+      kpiCard({label:"Reservations", value:m.reservations, sub:m.returns+" returns today"}) +
+      kpiCard({label:"Returns Lot", value:m.returnsLot, sub:"Vehicles awaiting processing"}) +
+      kpiCard({label:"Large Equipment", value:m.largeEq, sub:"Readyline component"}) +
+      kpiCard({label:"SUV / F-W-S", value:m.suv, sub:"Readyline component"}) +
+      kpiCard({label:"Specialty / Sedan / Pick Up", value:(m.specialty+m.sedan+m.pickup), sub:m.specialty+" specialty · "+m.sedan+" sedan · "+m.pickup+" pick up"});
+  }
+
+  // ---------------------------------------------------------------------
+  // Alerts
+  // ---------------------------------------------------------------------
+  function renderAlerts(customAlerts){
+    const el = document.getElementById("alerts");
+    let items = customAlerts || [];
+    if(!customAlerts){
+      const m = computeMetrics(filtered);
+      if(m.qtaDirty >= 20){
+        items.push({level:"danger", tag:"QTA DIRTY", text:"QTA Dirty is at "+m.qtaDirty+" — above the 20-vehicle threshold. Prioritize the wash line."});
+      } else if(m.qtaDirty >= 12){
+        items.push({level:"warn", tag:"QTA DIRTY", text:"QTA Dirty is at "+m.qtaDirty+" — trending high, keep an eye on cleaning throughput."});
+      }
+      if(m.activeStaff > 0 && m.activeStaff < 4){
+        items.push({level:"warn", tag:"STAFFING", text:"Only "+m.activeStaff+" active staff on the lot ("+m.cleaners+" cleaners, "+m.drivers+" drivers)."});
+      }
+      if(m.evReadiness < 50 && (m.evCharged+m.evNotCharged) > 0){
+        items.push({level:"warn", tag:"EV", text:"EV charging readiness is "+m.evReadiness+"% — "+m.evNotCharged+" vehicles still need a charge."});
+      }
+    }
+    el.innerHTML = items.map(function(a){
+      return '<div class="alert '+a.level+'"><span class="tag">'+a.tag+'</span><span>'+a.text+'</span></div>';
+    }).join("");
+  }
+
+  // ---------------------------------------------------------------------
+  // Charts
+  // ---------------------------------------------------------------------
+  const CH_NAVY = "#12305F";
+  const CH_GOLD = "#E8892B";
+  const CH_ORANGE = "#D3701A";
+  const CH_NAVY_LIGHT = "#1D4482";
+  const CH_GREY = "#94A0B4";
+
+  function destroy(id){ if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+
+  function renderTrendChart(list){
+    destroy("trend");
+    const sorted = list.slice().sort(function(a,b){
+      const da = parseTimestamp(a["Timestamp"]), db = parseTimestamp(b["Timestamp"]);
+      return (da&&db) ? da-db : 0;
+    });
+    const labels = sorted.map(function(r){
+      const d = parseTimestamp(r["Timestamp"]);
+      return d ? d.toLocaleTimeString([], {hour:'numeric'}) : r["Timestamp"];
+    });
+    const readyline = sorted.map(function(r){
+      return num(r["Large Equipment"])+num(r["SUV F-W-S"])+num(r["Specialty"])+num(r["Sedan"])+num(r["Pick Up"]);
+    });
+    const qtaClean = sorted.map(function(r){ return num(r["QTA Clean"]); });
+    const qtaDirty = sorted.map(function(r){ return num(r["QTA Dirty"]); });
+
+    const ctx = document.getElementById("trendChart");
+    charts.trend = new Chart(ctx, {
+      type:"line",
+      data:{ labels:labels, datasets:[
+        { label:"Readyline Inventory", data:readyline, borderColor:CH_GOLD, backgroundColor:"rgba(232,137,43,0.12)", fill:true, tension:.35, pointRadius:2, borderWidth:2.5 },
+        { label:"QTA Clean", data:qtaClean, borderColor:CH_NAVY_LIGHT, backgroundColor:"transparent", tension:.35, pointRadius:2, borderWidth:2 },
+        { label:"QTA Dirty", data:qtaDirty, borderColor:CH_ORANGE, backgroundColor:"transparent", tension:.35, pointRadius:2, borderWidth:2, borderDash:[5,3] }
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{size:11.5} } } },
+        scales:{ y:{ beginAtZero:true, grid:{color:"#EEF1F8"} }, x:{ grid:{display:false} } } }
+    });
+  }
+
+  function renderMixChart(m){
+    destroy("mix");
+    const ctx = document.getElementById("mixChart");
+    charts.mix = new Chart(ctx, {
+      type:"doughnut",
+      data:{ labels:["Large Equipment","SUV F-W-S","Specialty","Sedan","Pick Up"],
+        datasets:[{ data:[m.largeEq,m.suv,m.specialty,m.sedan,m.pickup],
+          backgroundColor:[CH_NAVY,CH_NAVY_LIGHT,CH_GOLD,CH_ORANGE,CH_GREY], borderWidth:2, borderColor:"#fff" }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:"62%",
+        plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{size:11} } } } }
+    });
+  }
+
+  function renderStaffChart(m){
+    destroy("staff");
+    const ctx = document.getElementById("staffChart");
+    charts.staff = new Chart(ctx, {
+      type:"bar",
+      data:{ labels:["Cleaners","Drivers"], datasets:[{ data:[m.cleaners,m.drivers], backgroundColor:[CH_NAVY,CH_GOLD], borderRadius:6, maxBarThickness:56 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+        scales:{ y:{ beginAtZero:true, grid:{color:"#EEF1F8"} }, x:{ grid:{display:false} } } }
+    });
+  }
+
+  function renderResChart(m){
+    destroy("res");
+    const ctx = document.getElementById("resChart");
+    charts.res = new Chart(ctx, {
+      type:"bar",
+      data:{ labels:["Reservations","Returns"], datasets:[{ data:[m.reservations,m.returns], backgroundColor:[CH_NAVY_LIGHT,CH_ORANGE], borderRadius:6, maxBarThickness:56 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
+        scales:{ y:{ beginAtZero:true, grid:{color:"#EEF1F8"} }, x:{ grid:{display:false} } } }
+    });
+  }
+
+  function renderEvChart(m){
+    destroy("ev");
+    const ctx = document.getElementById("evChart");
+    charts.ev = new Chart(ctx, {
+      type:"doughnut",
+      data:{ labels:["Charged","Not Charged"], datasets:[{ data:[m.evCharged,m.evNotCharged], backgroundColor:[CH_GOLD,"#E2E6EF"], borderWidth:2, borderColor:"#fff" }] },
+      options:{ responsive:true, maintainAspectRatio:false, cutout:"68%",
+        plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{size:11} } } } }
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // Table
+  // ---------------------------------------------------------------------
+  function renderTable(list){
+    const head = document.getElementById("tableHead");
+    const body = document.getElementById("tableBody");
+    const cols = COLUMN_ORDER;
+
+    head.innerHTML = cols.map(function(c){ return "<th>"+c+"</th>"; }).join("");
+
+    const sorted = list.slice().sort(function(a,b){
+      const da = parseTimestamp(a["Timestamp"]), db = parseTimestamp(b["Timestamp"]);
+      if(da && db) return db-da;
+      return 0;
+    });
+
+    body.innerHTML = sorted.map(function(r){
+      return "<tr>" + cols.map(function(c){ return "<td>"+(r[c]!==undefined?r[c]:"")+"</td>"; }).join("") + "</tr>";
+    }).join("");
+
+    document.getElementById("tableCount").textContent = sorted.length + (sorted.length===1?" record":" records");
+  }
+
+  // ---------------------------------------------------------------------
+  // CSV export
+  // ---------------------------------------------------------------------
+  function exportCsv(){
+    const cols = COLUMN_ORDER;
+    const lines = [cols.join(",")];
+    filtered.forEach(function(r){
+      lines.push(cols.map(function(c){
+        let v = r[c]!==undefined ? String(r[c]) : "";
+        if(v.indexOf(",")!==-1 || v.indexOf('"')!==-1){ v = '"'+v.replace(/"/g,'""')+'"'; }
+        return v;
+      }).join(","));
+    });
+    const blob = new Blob([lines.join("\n")], {type:"text/csv"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "srq-scorecard-export.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------------------------------------------------------------------
+  // Connection pill / status
+  // ---------------------------------------------------------------------
+  function setConnPill(state){
+    const pill = document.getElementById("connPill");
+    const text = document.getElementById("connPillText");
+    pill.className = "pill";
+    if(state === "live"){ pill.classList.add("live"); text.textContent = "Live"; }
+    else if(state === "sample"){ pill.classList.add("sample"); text.textContent = "Sample data"; }
+    else if(state === "offline"){ pill.classList.add("offline"); text.textContent = "Connection error"; }
+    else { text.textContent = "Loading…"; }
+  }
+
+  // ---------------------------------------------------------------------
+  // Master render
+  // ---------------------------------------------------------------------
+  function renderAll(skipAlerts){
+    const m = computeMetrics(filtered);
+    renderKpis(m);
+    if(!skipAlerts) renderAlerts();
+    renderTrendChart(filtered);
+    renderMixChart(m);
+    renderStaffChart(m);
+    renderResChart(m);
+    renderEvChart(m);
+    renderTable(filtered);
+  }
+
+  // ---------------------------------------------------------------------
+  // Auto refresh
+  // ---------------------------------------------------------------------
+  function setAutoRefresh(minutes){
+    if(refreshTimer){ clearInterval(refreshTimer); refreshTimer = null; }
+    if(minutes > 0){
+      refreshTimer = setInterval(function(){ loadData(); }, minutes*60*1000);
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Modal / settings
+  // ---------------------------------------------------------------------
+  function openModal(){
+    document.getElementById("scriptUrl").value = settings.scriptUrl || DEFAULT_SCRIPT_URL;
+    document.getElementById("sampleToggle").checked = !!settings.useSample;
+    document.getElementById("connStatusLine").textContent = "";
+    document.getElementById("connStatusLine").className = "";
+    document.getElementById("modalBackdrop").classList.add("open");
+  }
+  function closeModal(){ document.getElementById("modalBackdrop").classList.remove("open"); }
+
+  async function testAndSave(){
+    const url = document.getElementById("scriptUrl").value.trim();
+    const useSample = document.getElementById("sampleToggle").checked;
+    const statusEl = document.getElementById("connStatusLine");
+
+    settings.scriptUrl = url || DEFAULT_SCRIPT_URL;
+    settings.useSample = useSample;
+    saveSettings(settings);
+
+    if(useSample){
+      closeModal();
+      loadData();
+      return;
+    }
+
+    statusEl.textContent = "Testing connection…";
+    statusEl.className = "";
+    try{
+      const json = await fetchLiveData();
+      statusEl.textContent = "Connected — " + (json.count!=null?json.count:0) + " rows found.";
+      statusEl.className = "ok";
+      setTimeout(function(){ closeModal(); loadData(); }, 700);
+    }catch(err){
+      statusEl.textContent = err.message;
+      statusEl.className = "err";
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Wire up events
+  // ---------------------------------------------------------------------
+  document.getElementById("settingsBtn").addEventListener("click", openModal);
+  document.getElementById("modalCancel").addEventListener("click", closeModal);
+  document.getElementById("modalBackdrop").addEventListener("click", function(e){ if(e.target === this) closeModal(); });
+  document.getElementById("modalTest").addEventListener("click", testAndSave);
+
+  document.getElementById("refreshBtn").addEventListener("click", function(){ loadData(); });
+  document.getElementById("exportBtn").addEventListener("click", exportCsv);
+
+  document.getElementById("dateFrom").addEventListener("change", function(){ applyFilters(); });
+  document.getElementById("dateTo").addEventListener("change", function(){ applyFilters(); });
+  document.getElementById("searchBox").addEventListener("input", function(){ applyFilters(); });
+
+  document.getElementById("shiftToggle").addEventListener("click", function(e){
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    Array.from(this.children).forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    activeShift = btn.getAttribute("data-shift");
+    applyFilters();
+  });
+
+  document.getElementById("autoRefresh").addEventListener("change", function(){
+    const mins = parseInt(this.value, 10) || 0;
+    settings.autoRefresh = mins;
+    saveSettings(settings);
+    setAutoRefresh(mins);
+  });
+
+  // ---------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------
+  document.getElementById("openFormBtn").href = settings.scriptUrl || DEFAULT_SCRIPT_URL;
+  document.getElementById("autoRefresh").value = String(settings.autoRefresh || 0);
+  setAutoRefresh(settings.autoRefresh || 0);
+
+  loadData();
+
+})();
+</script>
+</body>
+</html>
