@@ -34,7 +34,6 @@
   <header class="topbar"><div class="brand"><div class="brand-logo" aria-label="Horizon MLS Managed Labor Solutions"><span class="brand-swoosh" aria-hidden="true"></span><span class="brand-horizon">HORIZON</span><span class="brand-mls">MLS</span><span class="brand-caption">MANAGED <em>LABOR SOLUTIONS</em></span></div><div class="brand-copy"><strong>Operations Scorecard</strong><small>SRQ · Performance Intelligence</small></div></div><div class="top-actions"><div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Sample data</span></div><a class="button scorecard-link" href="https://script.google.com/macros/s/AKfycbyxrLqGS8qrktC9pXB-V7aLr-ErKkVEawCLq5e--prq6s5-H4_WGgKRTCHJeNPZseAp/exec" target="_blank" rel="noopener noreferrer">Open scorecard ↗</a><button class="button" id="refreshButton" title="Refresh dashboard">↻ <span class="refresh-label">Refresh</span></button></div></header>
   <main class="wrap"><section class="heading"><div class="heading-title"><h1>SRQ OPERATIONS SCORECARD</h1><p>Staffing, fleet readiness, and QTA activity—at a glance.</p></div><div class="filters"><label>From <input id="startDate" type="date"></label><label>To <input id="endDate" type="date"></label><label>Time <select id="hourFilter"><option value="all">All hours</option><option value="morning">Morning · 6 AM–11 AM</option><option value="afternoon">Afternoon · 12 PM–5 PM</option><option value="evening">Evening · 6 PM onward</option></select></label></div></section>
   <div class="notice" id="demoNotice"><span id="demoNoticeText">Showing sample scorecard responses. Connecting to your Google Sheet…</span></div>
-  <div id="debugKeys" style="padding:10px 15px;margin-bottom:20px;border:1px solid #cfe0ee;border-radius:9px;background:#eef4fb;color:#2b537f;font-size:11px;font-family:monospace;word-break:break-word;display:none;"></div>
   <section class="kpis" id="kpiGrid" aria-label="Operational metrics"></section>
   <section class="main-grid"><article class="panel"><div class="section-head"><div><h2>Readyline & QTA Trend</h2><small>Hourly vehicle readiness throughout the selected period</small></div><div class="legend"><span><i style="--c:#163d7b"></i>Readyline</span><span><i style="--c:#287b67"></i>QTA clean</span><span><i style="--c:#ed8b08"></i>QTA dirty</span></div></div><div class="chart" id="trendChart"></div></article><article class="panel"><div class="section-head"><div><h2>Current Vehicle Mix</h2><small>Latest scorecard snapshot by category</small></div><span class="muted" id="mixTime"></span></div><div id="vehicleMix"></div></article></section>
   <section class="insights" id="insights"></section>
@@ -65,16 +64,20 @@
       // Real scorecard sheet has a single Timestamp column (e.g. "8/21/2026 11:55:01 AM"),
       // not separate Date/Time columns. Prefer that, but still honor explicit Date/Time
       // columns when present (e.g. a hand-built CSV).
+      // NOTE: 'Time' must be matched EXACTLY, never by prefix — a prefix match would
+      // greedily hit the 'Timestamp' column and dump the whole raw timestamp string
+      // into the Time cell. Only a real, standalone Time column should win here.
       const timestamp=get('Timestamp','Submitted at','Date Time');
-      const explicitDate=get('Date','Submission Date');
-      const explicitTime=get('Time','Hour','Shift Time');
+      const explicitDate=map[normalizeKey('Date')]??map[normalizeKey('Submission Date')];
+      const explicitTime=map[normalizeKey('Time')]??map[normalizeKey('Hour')]??map[normalizeKey('Shift Time')];
       let dateObj=null;
       if(timestamp){const d=new Date(timestamp);if(!Number.isNaN(d.getTime()))dateObj=d;}
       if(!dateObj&&explicitDate){const d=new Date(explicitDate);if(!Number.isNaN(d.getTime()))dateObj=d;}
       const date=dateObj?iso(dateObj):parseDate(explicitDate??timestamp??today);
+      // Always render the hour only (e.g. "5 PM"), never minutes.
       let hour,time;
-      if(explicitTime){hour=parseHour(explicitTime);time=String(explicitTime).includes('T')?hourLabel(new Date(explicitTime).getHours()):String(explicitTime||hourLabel(hour));}
-      else if(dateObj){hour=dateObj.getHours();time=dateObj.toLocaleTimeString('en-US',{hour:'numeric'});}
+      if(dateObj){hour=dateObj.getHours();time=hourLabel(hour);}
+      else if(explicitTime){hour=parseHour(explicitTime);time=hourLabel(hour);}
       else{hour=0;time=hourLabel(0);}
       // Vehicle-category columns as named in the real sheet, with the dashboard's
       // original short names kept as fallbacks for hand-built CSVs.
@@ -94,7 +97,7 @@
       const paddedReturnsKey=Object.keys(map).find(k=>k.startsWith('RETURNS')&&k.length>'RETURNS'.length);
       const rtn=numeric(paddedReturnsKey?map[paddedReturnsKey]:get('Returns Lot','RTN'));
       return{date,time,hour,vsa:numeric(get('Cleaners','VSA','VSAs','Vehicle Service Agents')),drivers:numeric(get('Drivers','Driver')),large,suv,sedan,special,pickup,rtn,dirty:numeric(get('QTA Dirty','QTADirty','Dirty')),clean:numeric(get('QTA Clean','QTAClean','Clean')),rl}}
-    async function loadData(){try{const res=await fetch(DATA_URL,{cache:'no-store'});if(!res.ok)throw Error('The Apps Script endpoint could not be reached.');const payload=await res.json();if(payload&&payload.success===false)throw Error(payload.error||'The endpoint reported an error.');const rows=Array.isArray(payload)?payload:payload.data??payload.rows??payload.records??[];if(!rows.length)throw Error('Connected, but no scorecard responses were found yet.');const debugEl=$('debugKeys');debugEl.style.display='block';debugEl.textContent=`Raw sheet fields (debug — please screenshot this box): ${Object.keys(rows[0]).join(', ')}`;records=rows.map(normalize);live=true;syncDates();render()}catch(e){live=false;$('demoNoticeText').textContent=`Showing sample scorecard responses. Couldn't reach the live sheet: ${e.message}`;render()}}
+    async function loadData(){try{const res=await fetch(DATA_URL,{cache:'no-store'});if(!res.ok)throw Error('The Apps Script endpoint could not be reached.');const payload=await res.json();if(payload&&payload.success===false)throw Error(payload.error||'The endpoint reported an error.');const rows=Array.isArray(payload)?payload:payload.data??payload.rows??payload.records??[];if(!rows.length)throw Error('Connected, but no scorecard responses were found yet.');records=rows.map(normalize);live=true;syncDates();render()}catch(e){live=false;$('demoNoticeText').textContent=`Showing sample scorecard responses. Couldn't reach the live sheet: ${e.message}`;render()}}
     function syncDates(){const dates=records.map(r=>r.date).sort();if(!dates.length)return;if(userAdjustedRange)return;const latest=dates[dates.length-1];$('startDate').value=latest;$('endDate').value=latest}
     function filtered(){const start=$('startDate').value,end=$('endDate').value,hour=$('hourFilter').value,query=$('searchInput').value.trim().toLowerCase();return records.filter(r=>(!start||r.date>=start)&&(!end||r.date<=end)&&(hour==='all'||hour==='morning'&&r.hour>=6&&r.hour<12||hour==='afternoon'&&r.hour>=12&&r.hour<18||hour==='evening'&&r.hour>=18)&&(!query||`${r.date} ${r.time}`.toLowerCase().includes(query))).sort((a,b)=>a.date.localeCompare(b.date)||a.hour-b.hour)}
     function delta(now,previous){const diff=now-previous;if(!diff)return'<span class="muted">No change</span>';return `<span class="delta ${diff>0?'good':'warn'}">${diff>0?'+':''}${diff}</span> vs. previous`}
