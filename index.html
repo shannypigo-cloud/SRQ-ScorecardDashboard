@@ -166,8 +166,11 @@
       brandSub: 'ABG · Performance Intelligence',
     },
 
-    // Fill in with this location's Apps Script deployment URLs once deployed.
-    dataUrl: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE?action=data',
+    // Live Apps Script Web App deployment (confirmed working — returns
+    // success:true with live sheet data as of this wiring).
+    dataUrl: 'https://script.google.com/macros/s/AKfycbzjxHn_wMwhDxYD2Bgki70q_5EyzsbC5hOKXYmLmqASI0TJ-V5tNhzQ9H6Izi6HuHdt/exec?action=data',
+    // TODO: set this to wherever abg-index.html (the entry form) is hosted,
+    // e.g. your GitHub Pages URL for that file.
     scorecardUrl: 'PASTE_YOUR_GITHUB_PAGES_FORM_URL_HERE',
 
     refreshMinutes: 5,
