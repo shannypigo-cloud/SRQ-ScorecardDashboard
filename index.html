@@ -4,69 +4,286 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#112e63">
-  <meta name="description" content="Live MLS ABG SRQ operational scorecard dashboard for staffing, readyline inventory, vehicle mix, and QTA activity.">
-  <title>MLS | SRQ ABG Operations Scorecard</title>
+  <meta name="description" content="Live MLS operational scorecard dashboard for staffing, readyline inventory, and QTA activity.">
+  <title>MLS | Operations Scorecard</title>
   <style>
-    :root{color-scheme:dark;--bg:#091423;--surface:#101f32;--surface2:#14263b;--line:#253950;--text:#eff5fc;--muted:#8fa4bc;--blue:#55a9ff;--cyan:#48d9cf;--green:#66e19a;--amber:#ffbf64;--red:#ff7480;--purple:#a898ff;--shadow:0 18px 48px rgba(2,8,18,.23);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 0%,rgba(56,133,183,.14),transparent 38%),var(--bg);color:var(--text)}button,input,select{font:inherit}button{cursor:pointer}.topbar{height:76px;padding:0 38px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:rgba(9,20,35,.86)}.brand{display:flex;align-items:center;gap:15px}.logo{height:41px;width:49px;display:grid;place-items:center;background:linear-gradient(135deg,#63a8ff,#776aff);border-radius:11px;font-size:17px;font-weight:900;letter-spacing:-1px}.brand strong{display:block;font-size:15px}.brand small,.muted{color:var(--muted)}.top-actions,.filters,.section-head,.card-title,.legend,.table-controls{display:flex;align-items:center;gap:12px}.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.dot{height:8px;width:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber)}.dot.live{background:var(--green);box-shadow:0 0 12px var(--green)}.button{height:38px;padding:0 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--text)}.button:hover{border-color:var(--blue)}.button.primary{background:#3a83ec;border-color:#3a83ec;font-weight:600}.wrap{width:min(1450px,calc(100% - 76px));margin:34px auto 48px}.heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:23px}.heading h1{font-size:29px;letter-spacing:-.7px;margin:0 0 5px}.heading p{margin:0;color:var(--muted)}.filters input,.filters select{height:38px;padding:0 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text)}.filters label{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.notice{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;margin-bottom:20px;border:1px solid rgba(255,191,100,.28);border-radius:9px;background:rgba(255,191,100,.07);color:#ffd99e;font-size:12px}.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px;margin-bottom:22px}.kpi,.panel{background:linear-gradient(145deg,var(--surface),#0e1c2d);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);transition:box-shadow .15s ease,transform .15s ease}.kpi{padding:18px 17px}.kpi:hover{transform:translateY(-1px)}.kpi-label{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.kpi-value{display:block;margin:12px 0 5px;font-size:31px;font-weight:750;letter-spacing:-1px}.kpi-foot{font-size:11px;color:var(--muted)}.delta.good{color:var(--green)}.delta.warn{color:var(--amber)}.delta.bad{color:var(--red)}.main-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:20px}.panel{padding:22px}.section-head{justify-content:space-between;margin-bottom:18px}.section-head h2{margin:0;font-size:14px}.section-head small{color:var(--muted);font-size:11px}.legend{flex-wrap:wrap;gap:11px;color:var(--muted);font-size:10px}.legend i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:50%;background:var(--c)}.chart{height:246px}.chart svg{width:100%;height:100%;overflow:visible}.chart-grid{stroke:#26394f;stroke-dasharray:3 5}.chart-label{fill:#8197af;font-size:10px}.mix-row{display:grid;grid-template-columns:80px 1fr 32px;align-items:center;gap:12px;margin:14px 0;font-size:12px}.mix-row span:first-child{color:#c8d5e3}.bar-track{height:9px;overflow:hidden;border-radius:6px;background:#253548}.bar-fill{height:100%;border-radius:6px;background:var(--c);transition:width .25s ease}.mix-row b{text-align:right;font-size:12px}.insights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}.insight{padding:15px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow)}.insight strong{display:block;margin-bottom:5px;font-size:12px}.insight span{color:var(--muted);font-size:11px;line-height:1.5}.table-panel{padding-bottom:10px}.table-controls input{height:34px;width:180px;padding:0 10px;background:var(--surface2);border:1px solid var(--line);border-radius:7px;color:var(--text)}.table-wrap{overflow:auto}.score-table{width:100%;border-collapse:collapse;white-space:nowrap}.score-table th,.score-table td{padding:12px 11px;border-bottom:1px solid rgba(37,57,80,.7);text-align:right;font-size:11px}.score-table th{color:var(--muted);font-size:10px;letter-spacing:.4px;position:sticky;top:0;z-index:1;text-transform:uppercase}.score-table tbody tr:nth-child(even){background:rgba(85,169,255,.02)}.score-table th:first-child,.score-table td:first-child,.score-table th:nth-child(2),.score-table td:nth-child(2){text-align:left}.score-table tbody tr:hover{background:rgba(85,169,255,.055)}.pill{padding:3px 7px;border-radius:5px;background:rgba(102,225,154,.12);color:var(--green)}.pill.warn{background:rgba(255,191,100,.13);color:var(--amber)}.footer{padding-top:16px;color:var(--muted);font-size:10px;text-align:right}.empty{padding:38px;text-align:center;color:var(--muted)}@media(max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.heading{align-items:flex-start;flex-direction:column}.filters{flex-wrap:wrap}}@media(max-width:760px){.topbar{height:auto;min-height:68px;padding:12px 17px;gap:8px}.brand strong{font-size:12px}.brand small{font-size:10px}.status{display:none}.wrap{width:calc(100% - 28px);margin-top:24px}.heading h1{font-size:24px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi{padding:13px}.kpi-value{font-size:26px}.main-grid,.insights{grid-template-columns:1fr}.filters{gap:8px}.filters label{font-size:10px}.filters input,.filters select{max-width:150px}.panel{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.table-controls input{width:130px}.top-actions .refresh-label{display:none}}
-    /* Horizon MLS brand system: white, deep navy, royal blue, and gold. */
-    :root{color-scheme:light;--bg:#f3f5f9;--surface:#fff;--surface2:#f5f7fb;--line:#dae0ea;--text:#132139;--muted:#758197;--blue:#143b7b;--cyan:#2684ad;--green:#16865a;--amber:#ed8b08;--red:#cf4755;--purple:#355493;--shadow:0 9px 28px rgba(17,46,99,.075)}
-    body{background:linear-gradient(165deg,#fff 0,#f4f6fa 48%,#edf1f7 100%);color:var(--text)}
-    .topbar{position:relative;height:103px;padding:0 45px;background:#fff;border-bottom:4px solid #f5a713;box-shadow:0 4px 18px rgba(17,46,99,.07)}
+    :root{color-scheme:light;--bg:#f3f5f9;--surface:#fff;--surface2:#f5f7fb;--line:#dae0ea;--text:#132139;--muted:#758197;--blue:#143b7b;--cyan:#2684ad;--green:#16865a;--amber:#ed8b08;--red:#cf4755;--purple:#355493;--shadow:0 9px 28px rgba(17,46,99,.075);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:linear-gradient(165deg,#fff 0,#f4f6fa 48%,#edf1f7 100%);color:var(--text)}
+    button,input,select{font:inherit}button{cursor:pointer}
+    .topbar{position:relative;height:103px;padding:0 45px;background:#fff;border-bottom:4px solid #f5a713;box-shadow:0 4px 18px rgba(17,46,99,.07);display:flex;align-items:center;justify-content:space-between}
     .topbar:before{content:"";position:absolute;left:0;top:0;width:29%;height:5px;background:linear-gradient(90deg,#102a58,#214987)}
-    .brand{gap:22px}.brand-logo{position:relative;display:grid;justify-items:center;min-width:151px;padding:9px 0 3px;line-height:1}
+    .brand{display:flex;align-items:center;gap:22px}
+    .brand-logo{position:relative;display:grid;justify-items:center;min-width:151px;padding:9px 0 3px;line-height:1}
     .brand-swoosh{position:absolute;top:0;left:21px;width:112px;height:13px;overflow:hidden}
     .brand-swoosh:before,.brand-swoosh:after{content:"";position:absolute;left:0;top:6px;width:108px;height:11px;border-radius:50%;transform:rotate(-7deg)}
     .brand-swoosh:before{background:linear-gradient(90deg,#153a78,#264c8c);top:8px}.brand-swoosh:after{left:40px;top:2px;width:80px;background:linear-gradient(90deg,#ffd54f,#f39400)}
-    .brand-horizon{padding-top:8px;color:#14396f;font-size:9px;font-weight:900;letter-spacing:2px}.brand-mls{background:linear-gradient(180deg,#285ba2,#102b5b);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:38px;font-style:italic;font-weight:950;letter-spacing:-4px}
+    .brand-horizon{padding-top:8px;color:#14396f;font-size:9px;font-weight:900;letter-spacing:2px}
+    .brand-mls{background:linear-gradient(180deg,#285ba2,#102b5b);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:38px;font-style:italic;font-weight:950;letter-spacing:-4px}
     .brand-caption{margin-top:2px;color:#14396f;font-size:6.6px;font-weight:900;letter-spacing:.25px}.brand-caption em{color:#ed8b08;font-style:normal}
-    .brand-copy{padding-left:20px;border-left:1px solid #d8deea}.brand strong{color:#102f62;font-size:16px}.brand small{display:block;margin-top:4px;color:#64738b}
-    .button{background:#fff;color:#15366c;border-color:#d5ddea}.button:hover{border-color:#ed8b08}.button.primary{background:linear-gradient(135deg,#173d7b,#112d60);border-color:#112d60;color:#fff}.scorecard-link{display:inline-flex;align-items:center;text-decoration:none}
-    .status{color:#68758a}.heading h1{color:#112f63;font-size:34px;font-weight:850}.heading p{color:#717d91}.heading-title:after{content:"FOCUSED. ACCOUNTABLE. DRIVEN TO EXCEL.";display:block;margin-top:11px;color:#ed8b08;font-size:10px;font-weight:800;letter-spacing:1.3px}
-    .filters input,.filters select{background:#fff;color:#132139;border-color:#d7deea}.notice{background:#fff9ee;border-color:#f2d28b;color:#875817}
-    .kpi,.panel{background:#fff;border-color:#dde3ed}.kpi{position:relative;overflow:hidden;padding-top:20px}.kpi:before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#153b7b,#315ba0)}.kpi:nth-child(2n):before{background:linear-gradient(90deg,#ffcf46,#ec8805)}.kpi-label{color:#56677e;font-size:10px;font-weight:700;letter-spacing:.3px}.kpi-value{color:#13366e;font-size:35px}.kpi:nth-child(2n) .kpi-value{color:#e98a0a}.kpi-foot{color:#758197}.kpi-icon{width:22px;height:22px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#eef2f9;color:#3a5686;font-size:11px}.kpi:nth-child(2n) .kpi-icon{background:#fdf1de;color:#c1780c}.kpi-badge{padding:1px 6px;border-radius:999px;background:#fff3df;color:#a8650a;font-size:8.5px;font-weight:800;letter-spacing:.5px;vertical-align:middle;margin-left:2px}
-    .section-head h2{color:#122f60;font-size:16px;font-weight:800}.section-head small,.legend{color:#738197}.chart-grid{stroke:#e0e5ee}.chart-label{fill:#76839a}.mix-row span:first-child{color:#33425b}.bar-track{background:#edf0f6}.insight{background:#fff;border-left:4px solid #173e7a}.insight:nth-child(2){border-left-color:#f09b0b}.insight:nth-child(3){border-left-color:#355a98}.insight strong{color:#16396e}.insight span{color:#66758a}
-    .table-controls input{background:#fff;border-color:#d7deea;color:#17315a}.score-table th{background:#f4f6fa;color:#52627b}.score-table th,.score-table td{border-bottom-color:#e6eaf1}.score-table tbody tr:hover{background:#f7f9fd}.pill{background:#e8f5ec;color:#178453}.pill.warn{background:#fff3df;color:#bd7400}.footer{color:#647189;font-weight:700;letter-spacing:.6px}
-    
-    @media(max-width:760px){.topbar{height:auto;min-height:85px;padding:10px 13px}.brand{gap:9px}.brand-logo{min-width:104px}.brand-mls{font-size:30px}.brand-horizon{font-size:7px}.brand-caption{font-size:5px}.brand-swoosh{left:9px}.brand-copy{padding-left:9px}.brand strong{font-size:10px}.brand small{font-size:9px}.scorecard-link{display:none}.heading h1{font-size:26px}}
+    .brand-copy{padding-left:20px;border-left:1px solid #d8deea}.brand strong{color:#102f62;font-size:16px;display:block}.brand small{display:block;margin-top:4px;color:#64738b}
+    .top-actions{display:flex;align-items:center;gap:12px}
+    .status{display:flex;align-items:center;gap:7px;color:#68758a;font-size:12px}
+    .dot{height:8px;width:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber)}.dot.live{background:var(--green);box-shadow:0 0 12px var(--green)}
+    .button{height:38px;padding:0 14px;border:1px solid #d5ddea;border-radius:8px;background:#fff;color:#15366c;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+    .button:hover{border-color:#ed8b08}.button.primary{background:linear-gradient(135deg,#173d7b,#112d60);border-color:#112d60;color:#fff}
+    .wrap{width:min(1450px,calc(100% - 76px));margin:34px auto 48px}
+    .heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:23px}
+    .heading h1{color:#112f63;font-size:34px;font-weight:850;letter-spacing:-.7px;margin:0 0 5px}
+    .heading p{margin:0;color:#717d91}
+    .heading-title:after{content:attr(data-tagline);display:block;margin-top:11px;color:#ed8b08;font-size:10px;font-weight:800;letter-spacing:1.3px}
+    .filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .filters label{display:flex;align-items:center;gap:7px;color:#68758a;font-size:12px}
+    .filters input,.filters select{height:38px;padding:0 11px;border:1px solid #d7deea;border-radius:8px;background:#fff;color:#132139}
+    .notice{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;margin-bottom:20px;border:1px solid #f2d28b;border-radius:9px;background:#fff9ee;color:#875817;font-size:12px}
+    .status-bar{display:inline-flex;flex-direction:column;gap:2px;margin-bottom:20px;padding:12px 18px;background:#fff;border:1px solid #dde3ed;border-radius:14px;box-shadow:var(--shadow)}
+    .status-bar .label{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#758197}
+    .status-bar .value{font-size:17px;font-weight:750;color:#13366e}
+    .status-bar .value.ok{color:var(--green)}
+    .status-bar .value.warn{color:var(--amber)}
+    .status-bar .value.bad{color:var(--red)}
+    .status-bar .sub{font-size:11px;color:#8a96ab}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:22px}
+    .kpi,.panel{background:#fff;border:1px solid #dde3ed;border-radius:14px;box-shadow:var(--shadow);transition:transform .15s ease}
+    .kpi{position:relative;overflow:hidden;padding:20px 17px 18px}
+    .kpi:hover{transform:translateY(-1px)}
+    .kpi:before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#153b7b,#315ba0)}
+    .kpi:nth-child(2n):before{background:linear-gradient(90deg,#ffcf46,#ec8805)}
+    .kpi-label{display:flex;justify-content:space-between;color:#56677e;font-size:10px;font-weight:700;letter-spacing:.3px}
+    .kpi-value{display:block;margin:12px 0 5px;font-size:35px;font-weight:750;letter-spacing:-1px;color:#13366e}
+    .kpi:nth-child(2n) .kpi-value{color:#e98a0a}
+    .kpi-foot{font-size:11px;color:#758197}
+    .kpi-icon{width:22px;height:22px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#eef2f9;color:#3a5686;font-size:11px}
+    .kpi:nth-child(2n) .kpi-icon{background:#fdf1de;color:#c1780c}
+    .kpi-badge{padding:1px 6px;border-radius:999px;background:#fff3df;color:#a8650a;font-size:8.5px;font-weight:800;letter-spacing:.5px;vertical-align:middle;margin-left:2px}
+    .delta.good{color:var(--green)}.delta.warn{color:var(--amber)}.delta.bad{color:var(--red)}
+    .main-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:20px}
+    .main-grid.single{grid-template-columns:1fr}
+    .panel{padding:22px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px}
+    .section-head h2{margin:0;font-size:16px;color:#122f60;font-weight:800}
+    .section-head small{color:#738197;font-size:11px}
+    .legend{display:flex;flex-wrap:wrap;gap:11px;color:#738197;font-size:10px}
+    .legend i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:50%;background:var(--c)}
+    .chart{height:246px}.chart svg{width:100%;height:100%;overflow:visible}
+    .chart-grid{stroke:#e0e5ee;stroke-dasharray:3 5}.chart-label{fill:#76839a;font-size:10px}
+    .mix-row{display:grid;grid-template-columns:80px 1fr 32px;align-items:center;gap:12px;margin:14px 0;font-size:12px}
+    .mix-row span:first-child{color:#33425b}
+    .bar-track{height:9px;overflow:hidden;border-radius:6px;background:#edf0f6}
+    .bar-fill{height:100%;border-radius:6px;background:var(--c);transition:width .25s ease}
+    .mix-row b{text-align:right;font-size:12px}
+    .insights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}
+    .insight{padding:15px 16px;border:1px solid #dde3ed;border-left:4px solid #173e7a;border-radius:12px;background:#fff;box-shadow:var(--shadow)}
+    .insight:nth-child(2){border-left-color:#f09b0b}.insight:nth-child(3){border-left-color:#355a98}
+    .insight strong{display:block;margin-bottom:5px;font-size:12px;color:#16396e}
+    .insight span{color:#66758a;font-size:11px;line-height:1.5}
+    .table-panel{padding-bottom:10px}
+    .table-controls{display:flex;align-items:center;gap:12px}
+    .table-controls input{height:34px;width:180px;padding:0 10px;background:#fff;border:1px solid #d7deea;border-radius:7px;color:#17315a}
+    .table-wrap{overflow:auto}
+    .score-table{width:100%;border-collapse:collapse;white-space:nowrap}
+    .score-table th,.score-table td{padding:12px 11px;border-bottom:1px solid #e6eaf1;text-align:right;font-size:11px}
+    .score-table th{background:#f4f6fa;color:#52627b;font-size:10px;letter-spacing:.4px;position:sticky;top:0;z-index:1;text-transform:uppercase}
+    .score-table tbody tr:nth-child(even){background:rgba(85,169,255,.02)}
+    .score-table th:first-child,.score-table td:first-child,.score-table th:nth-child(2),.score-table td:nth-child(2){text-align:left}
+    .score-table tbody tr:hover{background:#f7f9fd}
+    .pill{padding:3px 7px;border-radius:5px;background:#e8f5ec;color:#178453}.pill.warn{background:#fff3df;color:#bd7400}
+    .footer{padding-top:16px;color:#647189;font-weight:700;letter-spacing:.6px;font-size:10px;text-align:right}
+    .empty{padding:38px;text-align:center;color:var(--muted)}
+    @media(max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.heading{align-items:flex-start;flex-direction:column}.filters{flex-wrap:wrap}}
+    @media(max-width:760px){.topbar{height:auto;min-height:85px;padding:10px 13px;gap:8px}.brand{gap:9px}.brand-logo{min-width:104px}.brand-mls{font-size:30px}.brand-horizon{font-size:7px}.brand-caption{font-size:5px}.brand-swoosh{left:9px}.brand-copy{padding-left:9px}.brand strong{font-size:10px}.brand small{font-size:9px}.status{display:none}.wrap{width:calc(100% - 28px);margin-top:24px}.heading h1{font-size:24px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi{padding:13px}.kpi-value{font-size:26px}.main-grid,.insights{grid-template-columns:1fr}.filters{gap:8px}.filters label{font-size:10px}.filters input,.filters select{max-width:150px}.panel{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.table-controls input{width:130px}.top-actions .refresh-label,.scorecard-link{display:none}}
   </style>
 </head>
 <body>
-  <header class="topbar"><div class="brand"><div class="brand-logo" aria-label="Horizon MLS Managed Labor Solutions"><span class="brand-swoosh" aria-hidden="true"></span><span class="brand-horizon">HORIZON</span><span class="brand-mls">MLS</span><span class="brand-caption">MANAGED <em>LABOR SOLUTIONS</em></span></div><div class="brand-copy"><strong>Operations Scorecard</strong><small>SRQ · Performance Intelligence</small></div></div><div class="top-actions"><div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Sample data</span></div><a class="button scorecard-link" href="https://script.google.com/macros/s/AKfycbyxrLqGS8qrktC9pXB-V7aLr-ErKkVEawCLq5e--prq6s5-H4_WGgKRTCHJeNPZseAp/exec" target="_blank" rel="noopener noreferrer">Open scorecard ↗</a><button class="button" id="refreshButton" title="Refresh dashboard">↻ <span class="refresh-label">Refresh</span></button></div></header>
-  <main class="wrap"><section class="heading"><div class="heading-title"><h1>SRQ OPERATIONS SCORECARD</h1><p>Staffing, fleet readiness, and QTA activity—at a glance.</p></div><div class="filters"><label>From <input id="startDate" type="date"></label><label>To <input id="endDate" type="date"></label><label>Time <select id="hourFilter"><option value="all">All hours</option><option value="morning">Morning · 6 AM–11 AM</option><option value="afternoon">Afternoon · 12 PM–5 PM</option><option value="evening">Evening · 6 PM onward</option></select></label></div></section>
-  <div class="notice" id="demoNotice"><span id="demoNoticeText">Showing sample scorecard responses. Connecting to your Google Sheet…</span></div>
-  <section class="kpis" id="kpiGrid" aria-label="Operational metrics"></section>
-  <section class="main-grid"><article class="panel"><div class="section-head"><div><h2>Readyline & QTA Trend</h2><small>Hourly vehicle readiness throughout the selected period</small></div><div class="legend"><span><i style="--c:#163d7b"></i>Readyline</span><span><i style="--c:#287b67"></i>QTA clean</span><span><i style="--c:#ed8b08"></i>QTA dirty</span></div></div><div class="chart" id="trendChart"></div></article><article class="panel"><div class="section-head"><div><h2>Current Vehicle Mix</h2><small>Latest scorecard snapshot by category</small></div><span class="muted" id="mixTime"></span></div><div id="vehicleMix"></div></article></section>
-  <section class="insights" id="insights"></section>
-  <section class="panel table-panel"><div class="section-head"><div><h2>Scorecard Responses</h2><small id="recordCount">0 submissions</small></div><div class="table-controls"><input id="searchInput" type="search" placeholder="Search date or time"><button class="button" id="exportButton">Export CSV</button></div></div><div class="table-wrap"><table class="score-table"><thead><tr><th>Date</th><th>Time</th><th>Cleaners</th><th>Drivers</th><th>Large</th><th>SUV</th><th>Sedan</th><th>Special</th><th>Pick up</th><th>RTN</th><th>QTA dirty</th><th>QTA clean</th><th>Readyline</th><th>Status</th></tr></thead><tbody id="tableBody"></tbody></table></div></section><footer class="footer">MLS · SRQ OPERATIONS SCORECARD <span id="updatedAt"></span></footer></main>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo" aria-label="Horizon MLS Managed Labor Solutions">
+        <span class="brand-swoosh" aria-hidden="true"></span>
+        <span class="brand-horizon">HORIZON</span>
+        <span class="brand-mls">MLS</span>
+        <span class="brand-caption">MANAGED <em>LABOR SOLUTIONS</em></span>
+      </div>
+      <div class="brand-copy"><strong>Operations Scorecard</strong><small id="brandSub"></small></div>
+    </div>
+    <div class="top-actions">
+      <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Sample data</span></div>
+      <a class="button scorecard-link" id="scorecardLink" href="#" target="_blank" rel="noopener noreferrer">Open scorecard ↗</a>
+      <button class="button" id="refreshButton" title="Refresh dashboard">↻ <span class="refresh-label">Refresh</span></button>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="heading">
+      <div class="heading-title" id="headingTitle"><h1 id="pageTitle">OPERATIONS SCORECARD</h1><p id="pageSubtitle"></p></div>
+      <div class="filters">
+        <label>From <input id="startDate" type="date"></label>
+        <label>To <input id="endDate" type="date"></label>
+        <label>Time <select id="hourFilter"><option value="all">All hours</option><option value="morning">Morning · 6 AM–11 AM</option><option value="afternoon">Afternoon · 12 PM–5 PM</option><option value="evening">Evening · 6 PM onward</option></select></label>
+      </div>
+    </section>
+    <div class="notice" id="demoNotice"><span id="demoNoticeText">Showing sample scorecard responses. Connecting to your Google Sheet…</span></div>
+    <section class="status-bar" aria-label="Last scorecard received">
+      <span class="label">Last Scorecard Received</span>
+      <span class="value" id="lastScorecardValue">—</span>
+      <span class="sub" id="lastScorecardSub"></span>
+    </section>
+    <section class="kpis" id="kpiGrid" aria-label="Operational metrics"></section>
+    <section class="main-grid" id="mainGrid">
+      <article class="panel">
+        <div class="section-head"><div><h2>Readyline & QTA Trend</h2><small>Hourly vehicle readiness throughout the selected period</small></div><div class="legend" id="chartLegend"></div></div>
+        <div class="chart" id="trendChart"></div>
+      </article>
+      <article class="panel" id="mixPanel">
+        <div class="section-head"><div><h2 id="mixTitle">Current Vehicle Mix</h2><small>Latest scorecard snapshot by category</small></div><span class="muted" id="mixTime"></span></div>
+        <div id="vehicleMix"></div>
+      </article>
+    </section>
+    <section class="insights" id="insights"></section>
+    <section class="panel table-panel">
+      <div class="section-head"><div><h2>Scorecard Responses</h2><small id="recordCount">0 submissions</small></div>
+        <div class="table-controls"><input id="searchInput" type="search" placeholder="Search date or time"><button class="button" id="exportButton">Export CSV</button></div>
+      </div>
+      <div class="table-wrap"><table class="score-table"><thead><tr id="tableHeadRow"></tr></thead><tbody id="tableBody"></tbody></table></div>
+    </section>
+    <footer class="footer">MLS · <span id="footerLabel"></span> <span id="updatedAt"></span></footer>
+  </main>
+
   <script>
+  // ==========================================================================
+  // LOCATION CONFIG — ABG
+  // Same vehicle-category structure as the original SRQ dashboard: readyline
+  // is CALCULATED as the sum of five vehicle categories. Real sheet headers
+  // are padded with "(XX SPACES)" annotations from the Google Form, so
+  // category aliases rely on the engine's prefix-match fallback. Returns has
+  // two distinct meanings here: a padded lot-count column (fields.rtn) and a
+  // separate plain "Returns" business metric (tracked as an additionalMetric).
+  // ==========================================================================
+  const CONFIG = {
+    location: {
+      code: 'ABG',
+      title: 'ABG OPERATIONS SCORECARD',
+      subtitle: 'Staffing, fleet readiness, and QTA activity—at a glance.',
+      tagline: 'FOCUSED. ACCOUNTABLE. DRIVEN TO EXCEL.',
+      brandSub: 'ABG · Performance Intelligence',
+    },
+
+    // Fill in with this location's Apps Script deployment URLs once deployed.
+    dataUrl: 'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE?action=data',
+    scorecardUrl: 'PASTE_YOUR_GITHUB_PAGES_FORM_URL_HERE',
+
+    refreshMinutes: 5,
+
+    staffFields: [
+      { key: 'cleaners', label: 'Cleaners', aliases: ['Cleaners'] },
+      { key: 'drivers',  label: 'Drivers',  aliases: ['Drivers'] },
+    ],
+
+    // Readyline = sum of these five categories (calculated, not direct entry).
+    // Aliases match the CLEAN name; the engine's prefix-match fallback finds
+    // the real padded header (e.g. "LARGE EQUIPMENT (15 SPACES)") on its own.
+    categories: [
+      { key: 'large',   label: 'Large',   color: '#153c79', aliases: ['Large Equipment', 'Large', 'Large Vehicles'] },
+      { key: 'suv',     label: 'SUV',     color: '#ef950b', aliases: ['SUV F-W-S', 'SUV', 'SUVs'] },
+      { key: 'sedan',   label: 'Sedan',   color: '#365d99', aliases: ['Sedan', 'Sedans'] },
+      // Note: real header is misspelled "Speciality" (extra "i") — both
+      // spellings are included so the prefix match finds it either way.
+      { key: 'special', label: 'Special', color: '#f6bd37', aliases: ['Specialty', 'Speciality', 'Special'] },
+      { key: 'pickup',  label: 'Pick up', color: '#2584a1', aliases: ['Pick Up', 'Pickup', 'Pickups'] },
+    ],
+
+    // readyline omitted -> engine defaults to 'calculated' (sum of categories).
+
+    // Core metrics every location tracks. rtn here is the padded LOT COUNT
+    // column ("RETURNS ( 26 SPACES)") — paddedPrefix finds it regardless of
+    // the exact padding text.
+    fields: {
+      rtn:   { label: 'Returns (Lot)', aliases: ['Returns Lot', 'RTN'], paddedPrefix: 'RETURNS' },
+      dirty: { label: 'QTA dirty',     aliases: ['QTA Dirty', 'QTADirty', 'Dirty'] },
+      clean: { label: 'QTA clean',     aliases: ['QTA Clean', 'QTAClean', 'Clean'] },
+    },
+
+    // Extra location-specific metrics. "returnsBiz" is the separate PLAIN
+    // "Returns" column (completed returns, not the lot count above) — its
+    // exact-match alias finds the unpadded column correctly even though
+    // fields.rtn is also hunting for something starting with "RETURNS".
+    additionalMetrics: [
+      { key: 'reservations', label: 'Reservations',        aliases: ['Reservations'],    color: '#a898ff' },
+      { key: 'returnsBiz',   label: 'Returns (Completed)',  aliases: ['Returns'],         color: '#2684ad', hint: 'Completed rental returns' },
+      { key: 'evCharged',    label: 'EV Charged',           aliases: ['EV Charged'],      color: '#16865a' },
+      { key: 'evNotCharged', label: 'EV Not Charged',       aliases: ['EV Not Charged'],  color: '#cf4755' },
+    ],
+
+    thresholds: {
+      dirtyElevated: 25,
+      readyRateHealthy: 75,
+    },
+
+    // Sample/demo data shown before the live sheet connects (or if it fails).
+    sampleTemplates: [
+      { hour: 6,  cleaners: 2, drivers: 2, large: 10, suv: 24, sedan: 1,  special: 19, pickup: 2, rtn: 23, dirty: 17, clean: 71, reservations: 34, returnsBiz: 12, evCharged: 6, evNotCharged: 2 },
+      { hour: 7,  cleaners: 2, drivers: 2, large: 10, suv: 31, sedan: 1,  special: 2,  pickup: 1, rtn: 0,  dirty: 26, clean: 68, reservations: 28, returnsBiz: 9,  evCharged: 7, evNotCharged: 1 },
+      { hour: 8,  cleaners: 2, drivers: 2, large: 12, suv: 31, sedan: 10, special: 2,  pickup: 1, rtn: 0,  dirty: 27, clean: 62, reservations: 41, returnsBiz: 15, evCharged: 8, evNotCharged: 3 },
+      { hour: 9,  cleaners: 2, drivers: 3, large: 14, suv: 42, sedan: 4,  special: 2,  pickup: 1, rtn: 5,  dirty: 22, clean: 56, reservations: 45, returnsBiz: 18, evCharged: 9, evNotCharged: 2 },
+      { hour: 11, cleaners: 2, drivers: 3, large: 15, suv: 33, sedan: 5,  special: 2,  pickup: 1, rtn: 0,  dirty: 29, clean: 60, reservations: 39, returnsBiz: 20, evCharged: 10, evNotCharged: 4 },
+      { hour: 12, cleaners: 3, drivers: 3, large: 14, suv: 37, sedan: 3,  special: 2,  pickup: 1, rtn: 0,  dirty: 21, clean: 63, reservations: 47, returnsBiz: 22, evCharged: 11, evNotCharged: 1 },
+      { hour: 13, cleaners: 3, drivers: 3, large: 14, suv: 42, sedan: 11, special: 2,  pickup: 1, rtn: 5,  dirty: 29, clean: 66, reservations: 50, returnsBiz: 25, evCharged: 12, evNotCharged: 3 },
+      { hour: 15, cleaners: 2, drivers: 2, large: 15, suv: 23, sedan: 9,  special: 4,  pickup: 2, rtn: 7,  dirty: 19, clean: 71, reservations: 36, returnsBiz: 19, evCharged: 9,  evNotCharged: 2 },
+      { hour: 16, cleaners: 2, drivers: 2, large: 13, suv: 27, sedan: 0,  special: 2,  pickup: 2, rtn: 4,  dirty: 25, clean: 75, reservations: 30, returnsBiz: 16, evCharged: 8,  evNotCharged: 1 },
+      { hour: 17, cleaners: 2, drivers: 2, large: 12, suv: 20, sedan: 1,  special: 2,  pickup: 2, rtn: 4,  dirty: 21, clean: 71, reservations: 25, returnsBiz: 13, evCharged: 6,  evNotCharged: 2 },
+      { hour: 18, cleaners: 3, drivers: 2, large: 9,  suv: 25, sedan: 4,  special: 6,  pickup: 0, rtn: 3,  dirty: 8,  clean: 83, reservations: 20, returnsBiz: 10, evCharged: 5,  evNotCharged: 1 },
+    ],
+  };
+
+  // ==========================================================================
+  // ENGINE — do not edit per location.
+  // ==========================================================================
   (()=>{'use strict';
     const $=id=>document.getElementById(id), fmtDate=d=>new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric'}).format(d), numeric=v=>{const n=Number(String(v??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:0};
-    // Hardcoded connection — no drawer, no manual step. ?action=data is required:
-    // without it, the Apps Script /exec URL returns the scorecard FORM (HTML), not JSON.
-    const DATA_URL='https://script.google.com/macros/s/AKfycbyxrLqGS8qrktC9pXB-V7aLr-ErKkVEawCLq5e--prq6s5-H4_WGgKRTCHJeNPZseAp/exec?action=data';
-    const REFRESH_MS=5*60*1000;
+    const DATA_URL=CONFIG.dataUrl;
+    const REFRESH_MS=(CONFIG.refreshMinutes||5)*60*1000;
+    const CATS=CONFIG.categories||[], STAFF=CONFIG.staffFields||[], FIELDS=CONFIG.fields, TH=CONFIG.thresholds;
+    const EXTRA=CONFIG.additionalMetrics||[];
+    const RL_MODE=(CONFIG.readyline&&CONFIG.readyline.mode)||'calculated';
     let records=[],live=false,userAdjustedRange=false;
     const today=new Date(),iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    function sampleRecords(){const templates=[{hour:6,vsa:2,drivers:2,large:10,suv:24,sedan:1,special:19,pickup:2,rtn:23,dirty:17,clean:71,rl:56},{hour:7,vsa:2,drivers:2,large:10,suv:31,sedan:1,special:2,pickup:1,rtn:0,dirty:26,clean:68,rl:45},{hour:8,vsa:2,drivers:2,large:12,suv:31,sedan:10,special:2,pickup:1,rtn:0,dirty:27,clean:62,rl:56},{hour:9,vsa:2,drivers:3,large:14,suv:42,sedan:4,special:2,pickup:1,rtn:5,dirty:22,clean:56,rl:63},{hour:11,vsa:2,drivers:3,large:15,suv:33,sedan:5,special:2,pickup:1,rtn:0,dirty:29,clean:60,rl:56},{hour:12,vsa:3,drivers:3,large:14,suv:37,sedan:3,special:2,pickup:1,rtn:0,dirty:21,clean:63,rl:57},{hour:13,vsa:3,drivers:3,large:14,suv:42,sedan:11,special:2,pickup:1,rtn:5,dirty:29,clean:66,rl:70},{hour:15,vsa:2,drivers:2,large:15,suv:23,sedan:9,special:4,pickup:2,rtn:7,dirty:19,clean:71,rl:53},{hour:16,vsa:2,drivers:2,large:13,suv:27,sedan:0,special:2,pickup:2,rtn:4,dirty:25,clean:75,rl:44},{hour:17,vsa:2,drivers:2,large:12,suv:20,sedan:1,special:2,pickup:2,rtn:4,dirty:21,clean:71,rl:37},{hour:18,vsa:3,drivers:2,large:9,suv:25,sedan:4,special:6,pickup:0,rtn:3,dirty:8,clean:83,rl:44}];return templates.map(x=>({...x,date:iso(today),time:hourLabel(x.hour)}))}
-    function hourLabel(h){return `${h%12||12} ${h>=12?'PM':'AM'}`};function parseHour(value){const text=String(value??'').trim(),m=text.match(/(\d{1,2})(?::\d{2})?\s*(AM|PM)?/i);if(!m)return 0;let h=Number(m[1]);if(m[2])h=h%12+(m[2].toUpperCase()==='PM'?12:0);return h}
+
+    function initChrome(){
+      document.title=`MLS | ${CONFIG.location.code} Operations Scorecard`;
+      $('pageTitle').textContent=CONFIG.location.title;
+      $('pageSubtitle').textContent=CONFIG.location.subtitle;
+      $('headingTitle').setAttribute('data-tagline',CONFIG.location.tagline||'');
+      $('brandSub').textContent=CONFIG.location.brandSub||`${CONFIG.location.code} · Performance Intelligence`;
+      $('footerLabel').textContent=`${CONFIG.location.code} OPERATIONS SCORECARD`;
+      const link=$('scorecardLink');link.href=CONFIG.scorecardUrl||'#';if(!CONFIG.scorecardUrl)link.style.display='none';
+
+      const legendItems=[['#163d7b','Readyline'],['#287b67','QTA clean'],['#ed8b08','QTA dirty'],...EXTRA.map(m=>[m.color||'#888',m.label])];
+      $('chartLegend').innerHTML=legendItems.map(([c,l])=>`<span><i style="--c:${c}"></i>${l}</span>`).join('');
+
+      if(!CATS.length){$('mixPanel').style.display='none';$('mainGrid').classList.add('single');}
+
+      const headerLabels=[
+        'Date','Time',
+        ...STAFF.map(f=>f.label),
+        ...CATS.map(c=>c.label),
+        FIELDS.rtn.label,FIELDS.dirty.label,FIELDS.clean.label,
+        ...EXTRA.map(m=>m.label),
+        'Readyline','Status',
+      ];
+      $('tableHeadRow').innerHTML=headerLabels.map(h=>`<th>${h}</th>`).join('');
+    }
+
+    function sampleRecords(){return CONFIG.sampleTemplates.map(x=>({...x,date:iso(today),time:hourLabel(x.hour),ts:new Date(`${iso(today)}T${String(x.hour).padStart(2,'0')}:00:00`).getTime()}))}
+    function hourLabel(h){return `${h%12||12} ${h>=12?'PM':'AM'}`};
+    function parseHour(value){const text=String(value??'').trim(),m=text.match(/(\d{1,2})(?::\d{2})?\s*(AM|PM)?/i);if(!m)return 0;let h=Number(m[1]);if(m[2])h=h%12+(m[2].toUpperCase()==='PM'?12:0);return h}
     function parseDate(value){if(value instanceof Date)return iso(value);const raw=String(value??'').trim(),gviz=raw.match(/^Date\((\d+),(\d+),(\d+)/);if(gviz)return iso(new Date(+gviz[1],+gviz[2],+gviz[3]));const d=new Date(raw);return Number.isNaN(d.getTime())?iso(today):iso(d)}
     function normalizeKey(key){return String(key??'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
-    function normalize(row){const map={};for(const [key,value] of Object.entries(row))map[normalizeKey(key)]=value;
-      // Exact match first; then fall back to a prefix match. The real sheet's headers
-      // carry extra baked-in annotation text (e.g. "LARGE EQUIPMENT (15 SPACES)"), so an
-      // exact-name check alone never matches — checking that a header STARTS WITH the
-      // expected name catches these regardless of whatever trailing text follows.
+
+    function normalize(row){
+      const map={};for(const [key,value] of Object.entries(row))map[normalizeKey(key)]=value;
       const get=(...keys)=>{
         for(const k of keys){const v=map[normalizeKey(k)];if(v!==undefined&&v!==null&&v!=='')return v;}
         for(const k of keys){const nk=normalizeKey(k);if(!nk)continue;for(const mapKey in map){if(mapKey.length>nk.length&&mapKey.startsWith(nk)){const v=map[mapKey];if(v!==undefined&&v!==null&&v!=='')return v;}}}
         return undefined;
       };
-      // Real scorecard sheet has a single Timestamp column (e.g. "8/21/2026 11:55:01 AM"),
-      // not separate Date/Time columns. Prefer that, but still honor explicit Date/Time
-      // columns when present (e.g. a hand-built CSV).
-      // NOTE: 'Time' must be matched EXACTLY, never by prefix — a prefix match would
-      // greedily hit the 'Timestamp' column and dump the whole raw timestamp string
-      // into the Time cell. Only a real, standalone Time column should win here.
       const timestamp=get('Timestamp','Submitted at','Date Time');
       const explicitDate=map[normalizeKey('Date')]??map[normalizeKey('Submission Date')];
       const explicitTime=map[normalizeKey('Time')]??map[normalizeKey('Hour')]??map[normalizeKey('Shift Time')];
@@ -74,48 +291,128 @@
       if(timestamp){const d=new Date(timestamp);if(!Number.isNaN(d.getTime()))dateObj=d;}
       if(!dateObj&&explicitDate){const d=new Date(explicitDate);if(!Number.isNaN(d.getTime()))dateObj=d;}
       const date=dateObj?iso(dateObj):parseDate(explicitDate??timestamp??today);
-      // Always render the hour only (e.g. "5 PM"), never minutes.
       let hour,time;
       if(dateObj){hour=dateObj.getHours();time=hourLabel(hour);}
       else if(explicitTime){hour=parseHour(explicitTime);time=hourLabel(hour);}
       else{hour=0;time=hourLabel(0);}
-      // Vehicle-category columns as named in the real sheet, with the dashboard's
-      // original short names kept as fallbacks for hand-built CSVs.
-      const large=numeric(get('Large Equipment','Large','Large Vehicles'));
-      const suv=numeric(get('SUV F-W-S','SUV','SUVs'));
-      const sedan=numeric(get('Sedan','Sedans'));
-      const special=numeric(get('Specialty','Special'));
-      const pickup=numeric(get('Pick Up','Pickup','Pickups'));
-      // Readyline isn't a column in the sheet — it's a calculated total, same as
-      // the rest of the SRQ scorecard tooling.
-      const rl=large+suv+sedan+special+pickup;
-      // RTN needs special handling: the sheet has a padded "RETURNS (26 spaces)" column
-      // (vehicles waiting at the lot) AND a separate, exactly-named "Returns" business
-      // metric. The generic get() would grab the exact "Returns" match first, which is
-      // the wrong one — so look specifically for a RETURNS-prefixed key that's LONGER
-      // than the bare word, meaning it's the padded/annotated column, not the clean one.
-      const paddedReturnsKey=Object.keys(map).find(k=>k.startsWith('RETURNS')&&k.length>'RETURNS'.length);
-      const rtn=numeric(paddedReturnsKey?map[paddedReturnsKey]:get('Returns Lot','RTN'));
-      return{date,time,hour,vsa:numeric(get('Cleaners','VSA','VSAs','Vehicle Service Agents')),drivers:numeric(get('Drivers','Driver')),large,suv,sedan,special,pickup,rtn,dirty:numeric(get('QTA Dirty','QTADirty','Dirty')),clean:numeric(get('QTA Clean','QTAClean','Clean')),rl}}
+      const ts = dateObj ? dateObj.getTime() : new Date(`${date}T${String(hour).padStart(2,'0')}:00:00`).getTime();
+
+      const record={date,time,hour,ts};
+      let categorySum=0;
+      for(const cat of CATS){const v=numeric(get(...cat.aliases));record[cat.key]=v;categorySum+=v;}
+      for(const f of STAFF){record[f.key]=numeric(get(...f.aliases));}
+      for(const m of EXTRA){record[m.key]=numeric(get(...m.aliases));}
+
+      const rtnCfg=FIELDS.rtn;
+      const paddedKey=rtnCfg.paddedPrefix?Object.keys(map).find(k=>k.startsWith(rtnCfg.paddedPrefix)&&k.length>rtnCfg.paddedPrefix.length):null;
+      record.rtn=numeric(paddedKey?map[paddedKey]:get(...rtnCfg.aliases));
+      record.dirty=numeric(get(...FIELDS.dirty.aliases));
+      record.clean=numeric(get(...FIELDS.clean.aliases));
+
+      record.rl = RL_MODE==='direct' ? numeric(get(...(CONFIG.readyline&&CONFIG.readyline.aliases||['Readyline']))) : categorySum;
+      return record;
+    }
+
     async function loadData(){try{const res=await fetch(DATA_URL,{cache:'no-store'});if(!res.ok)throw Error('The Apps Script endpoint could not be reached.');const payload=await res.json();if(payload&&payload.success===false)throw Error(payload.error||'The endpoint reported an error.');const rows=Array.isArray(payload)?payload:payload.data??payload.rows??payload.records??[];if(!rows.length)throw Error('Connected, but no scorecard responses were found yet.');records=rows.map(normalize);live=true;syncDates();render()}catch(e){live=false;$('demoNoticeText').textContent=`Showing sample scorecard responses. Couldn't reach the live sheet: ${e.message}`;render()}}
     function syncDates(){const dates=records.map(r=>r.date).sort();if(!dates.length)return;if(userAdjustedRange)return;const latest=dates[dates.length-1];$('startDate').value=latest;$('endDate').value=latest}
     function filtered(){const start=$('startDate').value,end=$('endDate').value,hour=$('hourFilter').value,query=$('searchInput').value.trim().toLowerCase();return records.filter(r=>(!start||r.date>=start)&&(!end||r.date<=end)&&(hour==='all'||hour==='morning'&&r.hour>=6&&r.hour<12||hour==='afternoon'&&r.hour>=12&&r.hour<18||hour==='evening'&&r.hour>=18)&&(!query||`${r.date} ${r.time}`.toLowerCase().includes(query))).sort((a,b)=>a.date.localeCompare(b.date)||a.hour-b.hour)}
     function delta(now,previous){const diff=now-previous;if(!diff)return'<span class="muted">No change</span>';return `<span class="delta ${diff>0?'good':'warn'}">${diff>0?'+':''}${diff}</span> vs. previous`}
-    function renderKpis(rows){const latest=rows.at(-1)||{},previous=rows.at(-2)||latest,staff=(latest.vsa||0)+(latest.drivers||0),oldStaff=(previous.vsa||0)+(previous.drivers||0),cleanPct=(latest.clean||0)+(latest.dirty||0)?Math.round((latest.clean||0)/((latest.clean||0)+(latest.dirty||0))*100):0;const cards=[{label:'READYLINE VEHICLES',value:latest.rl||0,foot:delta(latest.rl||0,previous.rl||0),icon:'◉',badge:'CALC'},{label:'QTA CLEAN',value:latest.clean||0,foot:delta(latest.clean||0,previous.clean||0),icon:'✓'},{label:'QTA DIRTY',value:latest.dirty||0,foot:(latest.dirty||0)>25?'<span class="delta warn">Elevated backlog</span>':'<span class="delta good">Backlog manageable</span>',icon:'◌'},{label:'ACTIVE STAFF',value:staff,foot:`${latest.vsa||0} cleaners · ${latest.drivers||0} drivers`,icon:'♟'},{label:'QTA READY RATE',value:`${cleanPct}%`,foot:cleanPct>=75?'<span class="delta good">Healthy throughput</span>':'<span class="delta warn">Watch wash queue</span>',icon:'↗'},{label:'RETURNS',value:latest.rtn||0,foot:delta(latest.rtn||0,previous.rtn||0),icon:'↩'}];$('kpiGrid').innerHTML=cards.map(card=>`<article class="kpi"><div class="kpi-label"><span>${card.label}${card.badge?` <span class="kpi-badge">${card.badge}</span>`:''}</span><span class="kpi-icon">${card.icon}</span></div><strong class="kpi-value">${card.value}</strong><div class="kpi-foot">${card.foot}</div></article>`).join('')}
+
+    function latestTimestamp(){const todays=records.filter(r=>r.date===iso(new Date())&&typeof r.ts==='number').sort((a,b)=>a.ts-b.ts);return todays.length?todays[todays.length-1].ts:null}
+    function fmtRelative(ms){const mins=Math.round((Date.now()-ms)/60000);if(mins<1)return'just now';if(mins<60)return`${mins} min ago`;const h=Math.floor(mins/60),r=mins%60;return`${h}h ${r}m ago`}
+
+    function tickStatus(){
+      const lastTs=latestTimestamp(),lastValEl=$('lastScorecardValue'),lastSubEl=$('lastScorecardSub');
+      if(lastTs){
+        lastValEl.textContent=new Date(lastTs).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+        lastSubEl.textContent=fmtRelative(lastTs);
+        const mins=(Date.now()-lastTs)/60000;
+        lastValEl.className='value '+(mins<=65?'ok':mins<=90?'warn':'bad');
+      }else{
+        lastValEl.textContent='No submissions yet';lastValEl.className='value';lastSubEl.textContent='';
+      }
+    }
+
+    function renderKpis(rows){
+      const latest=rows.at(-1)||{},previous=rows.at(-2)||latest;
+      const staff=STAFF.reduce((s,f)=>s+(latest[f.key]||0),0);
+      const cleanPct=(latest.clean||0)+(latest.dirty||0)?Math.round((latest.clean||0)/((latest.clean||0)+(latest.dirty||0))*100):0;
+      const staffFoot=STAFF.map(f=>`${latest[f.key]||0} ${f.label.toLowerCase()}`).join(' · ');
+      const cards=[
+        {label:'READYLINE VEHICLES',value:latest.rl||0,foot:delta(latest.rl||0,previous.rl||0),icon:'◉',badge:RL_MODE==='calculated'?'CALC':undefined},
+        {label:'QTA CLEAN',value:latest.clean||0,foot:delta(latest.clean||0,previous.clean||0),icon:'✓'},
+        {label:'QTA DIRTY',value:latest.dirty||0,foot:(latest.dirty||0)>TH.dirtyElevated?'<span class="delta warn">Elevated backlog</span>':'<span class="delta good">Backlog manageable</span>',icon:'◌'},
+        {label:'ACTIVE STAFF',value:staff,foot:staffFoot,icon:'♟'},
+        {label:'QTA READY RATE',value:`${cleanPct}%`,foot:cleanPct>=TH.readyRateHealthy?'<span class="delta good">Healthy throughput</span>':'<span class="delta warn">Watch wash queue</span>',icon:'↗'},
+        {label:'RETURNS',value:latest.rtn||0,foot:delta(latest.rtn||0,previous.rtn||0),icon:'↩'},
+        ...EXTRA.map(m=>({label:m.label.toUpperCase(),value:latest[m.key]||0,foot:m.hint?`<span class="muted">${m.hint}</span>`:delta(latest[m.key]||0,previous[m.key]||0),icon:'▤'})),
+      ];
+      $('kpiGrid').innerHTML=cards.map(card=>`<article class="kpi"><div class="kpi-label"><span>${card.label}${card.badge?` <span class="kpi-badge">${card.badge}</span>`:''}</span><span class="kpi-icon">${card.icon}</span></div><strong class="kpi-value">${card.value}</strong><div class="kpi-foot">${card.foot}</div></article>`).join('');
+    }
+
     function smoothPath(points){if(points.length<2)return points.length?`M${points[0][0]},${points[0][1]}`:'';let d=`M${points[0][0]},${points[0][1]}`;for(let i=0;i<points.length-1;i++){const [x0,y0]=points[i],[x1,y1]=points[i+1],mx=(x0+x1)/2,my=(y0+y1)/2;d+=` Q${x0},${y0} ${mx},${my}`}const last=points[points.length-1];d+=` L${last[0]},${last[1]}`;return d}
-    function renderChart(rows){if(!rows.length){$('trendChart').innerHTML='<div class="empty">No scorecard responses match these filters.</div>';return}const visible=rows.slice(-18),w=680,h=235,p={top:12,right:12,bottom:34,left:34},max=Math.max(20,...visible.flatMap(r=>[r.rl,r.clean,r.dirty]))*1.15,x=i=>p.left+i*(w-p.left-p.right)/Math.max(1,visible.length-1),y=v=>h-p.bottom-v/max*(h-p.top-p.bottom),baseY=y(0);let markup=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Hourly readyline, clean QTA, and dirty QTA trend"><defs><linearGradient id="rlAreaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#163d7b" stop-opacity="0.16"/><stop offset="100%" stop-color="#163d7b" stop-opacity="0"/></linearGradient></defs>`;for(let i=0;i<5;i++){const val=Math.round(max*i/4),yy=y(val);markup+=`<line class="chart-grid" x1="${p.left}" y1="${yy}" x2="${w-p.right}" y2="${yy}"/><text class="chart-label" x="${p.left-8}" y="${yy+3}" text-anchor="end">${val}</text>`}
+    function renderChart(rows){
+      if(!rows.length){$('trendChart').innerHTML='<div class="empty">No scorecard responses match these filters.</div>';return}
+      const visible=rows.slice(-18),w=680,h=235,p={top:12,right:12,bottom:34,left:34};
+      const series=[['rl','#163d7b'],['clean','#287b67'],['dirty','#ed8b08'],...EXTRA.map(m=>[m.key,m.color||'#888'])];
+      const max=Math.max(20,...visible.flatMap(r=>series.map(([k])=>r[k]||0)))*1.15;
+      const x=i=>p.left+i*(w-p.left-p.right)/Math.max(1,visible.length-1),y=v=>h-p.bottom-v/max*(h-p.top-p.bottom),baseY=y(0);
+      let markup=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Hourly trend"><defs><linearGradient id="rlAreaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#163d7b" stop-opacity="0.16"/><stop offset="100%" stop-color="#163d7b" stop-opacity="0"/></linearGradient></defs>`;
+      for(let i=0;i<5;i++){const val=Math.round(max*i/4),yy=y(val);markup+=`<line class="chart-grid" x1="${p.left}" y1="${yy}" x2="${w-p.right}" y2="${yy}"/><text class="chart-label" x="${p.left-8}" y="${yy+3}" text-anchor="end">${val}</text>`}
       const rlPoints=visible.map((r,i)=>[x(i),y(r.rl)]);if(rlPoints.length){const areaPath=smoothPath(rlPoints)+` L${rlPoints[rlPoints.length-1][0]},${baseY} L${rlPoints[0][0]},${baseY} Z`;markup+=`<path d="${areaPath}" fill="url(#rlAreaFill)" stroke="none"/>`}
-      for(const [key,color]of[['rl','#163d7b'],['clean','#287b67'],['dirty','#ed8b08']]){const points=visible.map((r,i)=>[x(i),y(r[key])]);markup+=`<path d="${smoothPath(points)}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;points.forEach(([px,py])=>markup+=`<circle cx="${px}" cy="${py}" r="3" fill="#fff" stroke="${color}" stroke-width="2"/>`)}
-      visible.forEach((r,i)=>{if(visible.length<=9||i%Math.ceil(visible.length/8)===0||i===visible.length-1)markup+=`<text class="chart-label" x="${x(i)}" y="${h-10}" text-anchor="middle">${escapeHtml(r.time)}</text>`});$('trendChart').innerHTML=markup+'</svg>'}
-    function renderMix(rows){const r=rows.at(-1)||{},items=[['Large',r.large||0,'#153c79'],['SUV',r.suv||0,'#ef950b'],['Sedan',r.sedan||0,'#365d99'],['Special',r.special||0,'#f6bd37'],['Pick up',r.pickup||0,'#2584a1']],max=Math.max(1,...items.map(x=>x[1]));$('mixTime').textContent=r.time?`AS OF ${r.time}`:'';$('vehicleMix').innerHTML=items.map(([name,value,color])=>`<div class="mix-row"><span>${name}</span><div class="bar-track"><div class="bar-fill" style="--c:${color};width:${value/max*100}%"></div></div><b>${value}</b></div>`).join('')}
-    function renderInsights(rows){const last=rows.at(-1)||{},peak=rows.reduce((a,b)=>b.rl>(a?.rl??-1)?b:a,null),staff=(last.vsa||0)+(last.drivers||0),perPerson=staff?((last.rl||0)/staff).toFixed(1):'—';const cards=[{title:'↑ Peak readyline',text:peak?`${peak.rl} vehicles at ${peak.time} on ${prettyDate(peak.date)}.`:'No data available.'},{title:'◷ Cleaning queue',text:`${last.dirty||0} vehicles waiting; ${last.clean||0} currently clean and available.`},{title:'♟ Staffing coverage',text:`${staff} team members on the latest report; ${perPerson} readyline vehicles per person.`}];$('insights').innerHTML=cards.map(x=>`<article class="insight"><strong>${x.title}</strong><span>${x.text}</span></article>`).join('')}
+      for(const [key,color] of series){const points=visible.map((r,i)=>[x(i),y(r[key]||0)]);markup+=`<path d="${smoothPath(points)}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;points.forEach(([px,py])=>markup+=`<circle cx="${px}" cy="${py}" r="3" fill="#fff" stroke="${color}" stroke-width="2"/>`)}
+      visible.forEach((r,i)=>{if(visible.length<=9||i%Math.ceil(visible.length/8)===0||i===visible.length-1)markup+=`<text class="chart-label" x="${x(i)}" y="${h-10}" text-anchor="middle">${escapeHtml(r.time)}</text>`});
+      $('trendChart').innerHTML=markup+'</svg>';
+    }
+
+    function renderMix(rows){
+      if(!CATS.length)return;
+      const r=rows.at(-1)||{},items=CATS.map(c=>[c.label,r[c.key]||0,c.color]),max=Math.max(1,...items.map(x=>x[1]));
+      $('mixTime').textContent=r.time?`AS OF ${r.time}`:'';
+      $('vehicleMix').innerHTML=items.map(([name,value,color])=>`<div class="mix-row"><span>${name}</span><div class="bar-track"><div class="bar-fill" style="--c:${color};width:${value/max*100}%"></div></div><b>${value}</b></div>`).join('');
+    }
+
+    function renderInsights(rows){
+      const last=rows.at(-1)||{},peak=rows.reduce((a,b)=>b.rl>(a?.rl??-1)?b:a,null),staff=STAFF.reduce((s,f)=>s+(last[f.key]||0),0),perPerson=staff?((last.rl||0)/staff).toFixed(1):'—';
+      const extraLine=EXTRA.length?EXTRA.map(m=>`${last[m.key]||0} in ${m.label.toLowerCase()}`).join('; '):'';
+      const cards=[
+        {title:'↑ Peak readyline',text:peak?`${peak.rl} vehicles at ${peak.time} on ${prettyDate(peak.date)}.`:'No data available.'},
+        {title:'◷ Cleaning queue',text:`${last.dirty||0} vehicles waiting; ${last.clean||0} currently clean and available.${extraLine?` Also: ${extraLine}.`:''}`},
+        {title:'♟ Staffing coverage',text:`${staff} team members on the latest report; ${perPerson} readyline vehicles per person.`},
+      ];
+      $('insights').innerHTML=cards.map(x=>`<article class="insight"><strong>${x.title}</strong><span>${x.text}</span></article>`).join('');
+    }
     function prettyDate(value){const d=new Date(`${value}T12:00:00`);return Number.isNaN(d.getTime())?value:fmtDate(d)}
     function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-    function renderTable(rows){$('recordCount').textContent=`${rows.length} submission${rows.length===1?'':'s'}`;$('tableBody').innerHTML=rows.length?[...rows].reverse().map(r=>`<tr><td>${escapeHtml(prettyDate(r.date))}</td><td>${escapeHtml(r.time)}</td><td>${r.vsa}</td><td>${r.drivers}</td><td>${r.large}</td><td>${r.suv}</td><td>${r.sedan}</td><td>${r.special}</td><td>${r.pickup}</td><td>${r.rtn}</td><td>${r.dirty}</td><td>${r.clean}</td><td><strong>${r.rl}</strong></td><td><span class="pill ${r.dirty>25?'warn':''}">${r.dirty>25?'Watch':'On track'}</span></td></tr>`).join(''):'<tr><td colspan="14" class="empty">No responses match the selected filters.</td></tr>'}
-    function render(){const rows=filtered();renderKpis(rows);renderChart(rows);renderMix(rows);renderInsights(rows);renderTable(rows);$('statusDot').classList.toggle('live',live);$('statusText').textContent=live?'Live spreadsheet':'Sample data';$('demoNotice').style.display=live?'none':'flex';$('updatedAt').textContent=` · UPDATED ${new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`}
-    function exportCsv(){const rows=filtered(),headers=['Date','Time','VSA','DRIVERS','LARGE','SUV','SEDAN','SPECIAL','PICK UP','RTN','QTA DIRTY','QTA CLEAN','RL'],keys=['date','time','vsa','drivers','large','suv','sedan','special','pickup','rtn','dirty','clean','rl'],csv=[headers.join(','),...rows.map(r=>keys.map(k=>`"${String(r[k]).replaceAll('"','""')}"`).join(','))].join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`srq-scorecard-${iso(today)}.csv`;a.click();URL.revokeObjectURL(a.href)}
-    $('refreshButton').addEventListener('click',()=>loadData());$('exportButton').addEventListener('click',exportCsv);for(const id of['startDate','endDate','hourFilter','searchInput'])$(id).addEventListener(id==='searchInput'?'input':'change',()=>{if(id==='startDate'||id==='endDate')userAdjustedRange=true;render()});
+
+    function renderTable(rows){
+      $('recordCount').textContent=`${rows.length} submission${rows.length===1?'':'s'}`;
+      const keys=[...STAFF.map(f=>f.key),...CATS.map(c=>c.key)];
+      const extraKeys=EXTRA.map(m=>m.key);
+      const colCount=5+STAFF.length+CATS.length+extraKeys.length;
+      $('tableBody').innerHTML=rows.length?[...rows].reverse().map(r=>{
+        const cells=[escapeHtml(prettyDate(r.date)),escapeHtml(r.time),...keys.map(k=>r[k]),r.rtn,r.dirty,r.clean,...extraKeys.map(k=>r[k]),`<strong>${r.rl}</strong>`];
+        const status=`<span class="pill ${r.dirty>TH.dirtyElevated?'warn':''}">${r.dirty>TH.dirtyElevated?'Watch':'On track'}</span>`;
+        return `<tr>${cells.map(c=>`<td>${c}</td>`).join('')}<td>${status}</td></tr>`;
+      }).join(''):`<tr><td colspan="${colCount}" class="empty">No responses match the selected filters.</td></tr>`;
+    }
+
+    function render(){const rows=filtered();renderKpis(rows);renderChart(rows);renderMix(rows);renderInsights(rows);renderTable(rows);$('statusDot').classList.toggle('live',live);$('statusText').textContent=live?'Live spreadsheet':'Sample data';$('demoNotice').style.display=live?'none':'flex';$('updatedAt').textContent=` · UPDATED ${new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`;tickStatus()}
+
+    function exportCsv(){
+      const rows=filtered();
+      const keys=['date','time',...STAFF.map(f=>f.key),...CATS.map(c=>c.key),'rtn','dirty','clean',...EXTRA.map(m=>m.key),'rl'];
+      const headers=['Date','Time',...STAFF.map(f=>f.label.toUpperCase()),...CATS.map(c=>c.label.toUpperCase()),FIELDS.rtn.label.toUpperCase(),FIELDS.dirty.label.toUpperCase(),FIELDS.clean.label.toUpperCase(),...EXTRA.map(m=>m.label.toUpperCase()),'RL'];
+      const csv=[headers.join(','),...rows.map(r=>keys.map(k=>`"${String(r[k]).replaceAll('"','""')}"`).join(','))].join('\n');
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`${CONFIG.location.code.toLowerCase().replace(/\s+/g,'-')}-scorecard-${iso(today)}.csv`;a.click();URL.revokeObjectURL(a.href);
+    }
+
+    initChrome();
+    $('refreshButton').addEventListener('click',()=>loadData());
+    $('exportButton').addEventListener('click',exportCsv);
+    for(const id of['startDate','endDate','hourFilter','searchInput'])$(id).addEventListener(id==='searchInput'?'input':'change',()=>{if(id==='startDate'||id==='endDate')userAdjustedRange=true;render()});
     records=sampleRecords();syncDates();render();loadData();setInterval(loadData,REFRESH_MS);
+    setInterval(tickStatus,20000);
   })();
   </script>
 </body>
