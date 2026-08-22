@@ -344,7 +344,7 @@
         {label:'QTA CLEAN',value:latest.clean||0,foot:delta(latest.clean||0,previous.clean||0),icon:'✓'},
         {label:'QTA DIRTY',value:latest.dirty||0,foot:(latest.dirty||0)>TH.dirtyElevated?'<span class="delta warn">Elevated backlog</span>':'<span class="delta good">Backlog manageable</span>',icon:'◌'},
         {label:'ACTIVE STAFF',value:staff,foot:staffFoot,icon:'♟'},
-        {label:'QTA READY RATE',value:`${cleanPct}%`,foot:cleanPct>=TH.readyRateHealthy?'<span class="delta good">Healthy throughput</span>':'<span class="delta warn">Watch wash queue</span>',icon:'↗'},
+        {label:'QTA READY RATE',value:`${cleanPct}%`,foot:`<span class="muted">${latest.clean||0} of ${(latest.clean||0)+(latest.dirty||0)} QTA vehicles are clean</span><br>${cleanPct>=TH.readyRateHealthy?'<span class="delta good">Healthy throughput</span>':'<span class="delta warn">Watch wash queue</span>'}`,icon:'↗'},
         {label:'RETURNS',value:latest.rtn||0,foot:delta(latest.rtn||0,previous.rtn||0),icon:'↩'},
         ...EXTRA.map(m=>({label:m.label.toUpperCase(),value:latest[m.key]||0,foot:m.hint?`<span class="muted">${m.hint}</span>`:delta(latest[m.key]||0,previous[m.key]||0),icon:'▤'})),
       ];
