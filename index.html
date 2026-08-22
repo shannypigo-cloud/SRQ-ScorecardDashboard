@@ -204,20 +204,18 @@
       clean: { label: 'QTA clean',     aliases: ['QTA Clean', 'QTAClean', 'Clean'] },
     },
 
-    // Extra location-specific metrics. "returnsBiz" is the separate PLAIN
-    // "Returns" column (completed returns, not the lot count above) — its
-    // exact-match alias finds the unpadded column correctly even though
-    // fields.rtn is also hunting for something starting with "RETURNS".
-    additionalMetrics: [
-      { key: 'reservations', label: 'Reservations',        aliases: ['Reservations'],    color: '#a898ff' },
-      { key: 'returnsBiz',   label: 'Returns (Completed)',  aliases: ['Returns'],         color: '#2684ad', hint: 'Completed rental returns' },
-      { key: 'evCharged',    label: 'EV Charged',           aliases: ['EV Charged'],      color: '#16865a' },
-      { key: 'evNotCharged', label: 'EV Not Charged',       aliases: ['EV Not Charged'],  color: '#cf4755' },
-    ],
+    // Extra location-specific metrics. Reservations, Returns (Completed),
+    // EV Charged, and EV Not Charged are intentionally left out of the
+    // dashboard — the sheet still collects them via the form, but they
+    // aren't shown here. Leave this array empty to keep them hidden from
+    // KPI cards, the trend chart, the mix panel, insights, the table, and
+    // CSV export (all of which read from this array automatically).
+    additionalMetrics: [],
 
     thresholds: {
       dirtyElevated: 25,
       readyRateHealthy: 75,
+      readylineLow: 20,
     },
 
     // Sample/demo data shown before the live sheet connects (or if it fails).
@@ -381,7 +379,7 @@
       const cards=[
         {title:'↑ Peak readyline',text:peak?`${peak.rl} vehicles at ${peak.time} on ${prettyDate(peak.date)}.`:'No data available.'},
         {title:'◷ Cleaning queue',text:`${last.dirty||0} vehicles waiting; ${last.clean||0} currently clean and available.${extraLine?` Also: ${extraLine}.`:''}`},
-        {title:'♟ Staffing coverage',text:`${staff} team members on the latest report; ${perPerson} readyline vehicles per person.`},
+        {title:'♟ Staffing coverage',text:`${staff} team members on the latest report.`},
       ];
       $('insights').innerHTML=cards.map(x=>`<article class="insight"><strong>${x.title}</strong><span>${x.text}</span></article>`).join('');
     }
@@ -395,7 +393,7 @@
       const colCount=5+STAFF.length+CATS.length+extraKeys.length;
       $('tableBody').innerHTML=rows.length?[...rows].reverse().map(r=>{
         const cells=[escapeHtml(prettyDate(r.date)),escapeHtml(r.time),...keys.map(k=>r[k]),r.rtn,r.dirty,r.clean,...extraKeys.map(k=>r[k]),`<strong>${r.rl}</strong>`];
-        const status=`<span class="pill ${r.dirty>TH.dirtyElevated?'warn':''}">${r.dirty>TH.dirtyElevated?'Watch':'On track'}</span>`;
+        const status=`<span class="pill ${r.rl<TH.readylineLow?'warn':''}">${r.rl<TH.readylineLow?'Watch':'On track'}</span>`;
         return `<tr>${cells.map(c=>`<td>${c}</td>`).join('')}<td>${status}</td></tr>`;
       }).join(''):`<tr><td colspan="${colCount}" class="empty">No responses match the selected filters.</td></tr>`;
     }
