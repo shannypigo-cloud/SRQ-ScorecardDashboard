@@ -36,7 +36,8 @@
     .filters label{display:flex;align-items:center;gap:7px;color:#68758a;font-size:12px}
     .filters input,.filters select{height:38px;padding:0 11px;border:1px solid #d7deea;border-radius:8px;background:#fff;color:#132139}
     .notice{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;margin-bottom:20px;border:1px solid #f2d28b;border-radius:9px;background:#fff9ee;color:#875817;font-size:12px}
-    .status-bar{display:inline-flex;flex-direction:column;gap:2px;margin-bottom:20px;padding:12px 18px;background:#fff;border:1px solid #dde3ed;border-radius:14px;box-shadow:var(--shadow)}
+    .status-row{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+    .status-bar{display:inline-flex;flex-direction:column;gap:2px;padding:12px 18px;background:#fff;border:1px solid #dde3ed;border-radius:14px;box-shadow:var(--shadow);flex:1;min-width:200px}
     .status-bar .label{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#758197}
     .status-bar .value{font-size:17px;font-weight:750;color:#13366e}
     .status-bar .value.ok{color:var(--green)}
@@ -91,7 +92,7 @@
     .footer{padding-top:16px;color:#647189;font-weight:700;letter-spacing:.6px;font-size:10px;text-align:right}
     .empty{padding:38px;text-align:center;color:var(--muted)}
     @media(max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.heading{align-items:flex-start;flex-direction:column}.filters{flex-wrap:wrap}}
-    @media(max-width:760px){.topbar{height:auto;min-height:85px;padding:10px 13px;gap:8px}.brand{gap:9px}.brand-logo{min-width:104px}.brand-mls{font-size:30px}.brand-horizon{font-size:7px}.brand-caption{font-size:5px}.brand-swoosh{left:9px}.brand-copy{padding-left:9px}.brand strong{font-size:10px}.brand small{font-size:9px}.status{display:none}.wrap{width:calc(100% - 28px);margin-top:24px}.heading h1{font-size:24px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi{padding:13px}.kpi-value{font-size:26px}.main-grid,.insights{grid-template-columns:1fr}.filters{gap:8px}.filters label{font-size:10px}.filters input,.filters select{max-width:150px}.panel{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.table-controls input{width:130px}.top-actions .refresh-label,.scorecard-link{display:none}}
+    @media(max-width:760px){.topbar{height:auto;min-height:85px;padding:10px 13px;gap:8px}.brand{gap:9px}.brand-logo{min-width:104px}.brand-mls{font-size:30px}.brand-horizon{font-size:7px}.brand-caption{font-size:5px}.brand-swoosh{left:9px}.brand-copy{padding-left:9px}.brand strong{font-size:10px}.brand small{font-size:9px}.status{display:none}.wrap{width:calc(100% - 28px);margin-top:24px}.heading h1{font-size:24px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kpi{padding:13px}.kpi-value{font-size:26px}.main-grid,.insights{grid-template-columns:1fr}.filters{gap:8px}.filters label{font-size:10px}.filters input,.filters select{max-width:150px}.panel{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.table-controls input{width:130px}.top-actions .refresh-label,.scorecard-link{display:none}.status-row{flex-direction:column;gap:10px}}
   </style>
 </head>
 <body>
@@ -121,10 +122,22 @@
       </div>
     </section>
     <div class="notice" id="demoNotice"><span id="demoNoticeText">Showing sample scorecard responses. Connecting to your Google Sheet…</span></div>
-    <section class="status-bar" aria-label="Last scorecard received">
-      <span class="label">Last Scorecard Received</span>
-      <span class="value" id="lastScorecardValue">—</span>
-      <span class="sub" id="lastScorecardSub"></span>
+    <section class="status-row" aria-label="Last received summaries">
+      <div class="status-bar">
+        <span class="label">Last Scorecard Received</span>
+        <span class="value" id="lastScorecardValue">—</span>
+        <span class="sub" id="lastScorecardSub"></span>
+      </div>
+      <div class="status-bar">
+        <span class="label">First Scan Today</span>
+        <span class="value" id="firstScanValue">—</span>
+        <span class="sub" id="firstScanSub"></span>
+      </div>
+      <div class="status-bar">
+        <span class="label">Last Scan Received</span>
+        <span class="value" id="lastScanValue">—</span>
+        <span class="sub" id="lastScanSub"></span>
+      </div>
     </section>
     <section class="kpis" id="kpiGrid" aria-label="Operational metrics"></section>
     <section class="main-grid" id="mainGrid">
@@ -169,6 +182,11 @@
     // Live Apps Script Web App deployment (confirmed working — returns
     // success:true with live sheet data as of this wiring).
     dataUrl: 'https://script.google.com/macros/s/AKfycbzjxHn_wMwhDxYD2Bgki70q_5EyzsbC5hOKXYmLmqASI0TJ-V5tNhzQ9H6Izi6HuHdt/exec?action=data',
+    // Gate scanner log (separate sheet/Apps Script project) — used only to
+    // power the "Last Scan Received" status card. Confirmed working via
+    // ?format=json, which returns {ok:true, count, records:[{dir,mva,driver,dateRaw}]}
+    // with the most recent scan as the LAST item in the array.
+    scanLogUrl: 'https://script.google.com/macros/s/AKfycbwuNBdSHF93vIWms-x1YPE3ApcDKh014yINUd-9q8xMYNtr3FXI26q3PD1a90LDorp7/exec?format=json',
     // TODO: set this to wherever abg-index.html (the entry form) is hosted,
     // e.g. your GitHub Pages URL for that file.
     scorecardUrl: 'PASTE_YOUR_GITHUB_PAGES_FORM_URL_HERE',
@@ -334,6 +352,49 @@
       }
     }
 
+    // ---- First/Last Scan Received today (separate gate-scanner sheet, read-only) ----
+    let firstScanTs=null,lastScanTs=null;
+    async function loadScanData(){
+      if(!CONFIG.scanLogUrl)return;
+      try{
+        const res=await fetch(CONFIG.scanLogUrl,{cache:'no-store'});
+        if(!res.ok)throw Error('unreachable');
+        const payload=await res.json();
+        if(!payload||payload.ok===false)throw Error(payload&&payload.error||'error');
+        const records=payload.records||[];
+        const todayIso=iso(new Date());
+        const todaysTs=records
+          .map(r=>new Date(r.dateRaw).getTime())
+          .filter(t=>!Number.isNaN(t)&&iso(new Date(t))===todayIso);
+        if(!todaysTs.length)throw Error('no scans today');
+        firstScanTs=Math.min(...todaysTs);
+        lastScanTs=Math.max(...todaysTs);
+      }catch(e){
+        firstScanTs=null;lastScanTs=null;
+      }
+      tickScanStatus();
+    }
+    function tickScanStatus(){
+      const lastValEl=$('lastScanValue'),lastSubEl=$('lastScanSub');
+      const firstValEl=$('firstScanValue'),firstSubEl=$('firstScanSub');
+      if(!lastValEl||!firstValEl)return;
+      if(lastScanTs){
+        lastValEl.textContent=new Date(lastScanTs).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+        lastSubEl.textContent=fmtRelative(lastScanTs);
+        const mins=(Date.now()-lastScanTs)/60000;
+        lastValEl.className='value '+(mins<=65?'ok':mins<=90?'warn':'bad');
+      }else{
+        lastValEl.textContent='No scans yet';lastValEl.className='value';lastSubEl.textContent='';
+      }
+      if(firstScanTs){
+        firstValEl.textContent=new Date(firstScanTs).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+        firstSubEl.textContent=fmtRelative(firstScanTs);
+        firstValEl.className='value ok';
+      }else{
+        firstValEl.textContent='No scans yet';firstValEl.className='value';firstSubEl.textContent='';
+      }
+    }
+
     function renderKpis(rows){
       const latest=rows.at(-1)||{},previous=rows.at(-2)||latest;
       const staff=STAFF.reduce((s,f)=>s+(latest[f.key]||0),0);
@@ -413,7 +474,9 @@
     $('exportButton').addEventListener('click',exportCsv);
     for(const id of['startDate','endDate','hourFilter','searchInput'])$(id).addEventListener(id==='searchInput'?'input':'change',()=>{if(id==='startDate'||id==='endDate')userAdjustedRange=true;render()});
     records=sampleRecords();syncDates();render();loadData();setInterval(loadData,REFRESH_MS);
+    loadScanData();setInterval(loadScanData,REFRESH_MS);
     setInterval(tickStatus,20000);
+    setInterval(tickScanStatus,20000);
   })();
   </script>
 </body>
