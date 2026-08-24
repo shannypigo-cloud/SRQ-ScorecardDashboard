@@ -30,6 +30,9 @@
     .filters label{display:flex;align-items:center;gap:7px;color:#68758a;font-size:12px}
     .filters input,.filters select{height:38px;padding:0 11px;border:1px solid #d7deea;border-radius:8px;background:#fff;color:#132139}
     .notice{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;margin-bottom:20px;border:1px solid #f2d28b;border-radius:9px;background:#fff9ee;color:#875817;font-size:12px}
+    .notice.loading{border-color:#b9d4ef;background:#eef5fc;color:#1c4a80}
+    .notice .spinner{display:inline-block;width:11px;height:11px;border:2px solid #9ab9e0;border-top-color:#1c4a80;border-radius:50%;animation:spin .7s linear infinite;flex:none}
+    @keyframes spin{to{transform:rotate(360deg)}}
     .status-row{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
     .status-bar{display:inline-flex;flex-direction:column;gap:2px;padding:12px 18px;background:#fff;border:1px solid #dde3ed;border-radius:14px;box-shadow:var(--shadow);flex:1;min-width:200px}
     .status-bar .label{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#758197}
@@ -111,6 +114,7 @@
       </div>
     </section>
     <div class="notice" id="demoNotice"><span id="demoNoticeText">Showing sample scorecard responses. Connecting to your Google Sheet…</span></div>
+    <div class="notice loading" id="loadingNotice" style="display:none;"><span style="display:inline-flex;align-items:center;gap:8px;"><span class="spinner"></span>Loading latest scorecard data…</span></div>
     <section class="status-row" aria-label="Last received summaries">
       <div class="status-bar">
         <span class="label">Last Scorecard Received</span>
@@ -321,7 +325,8 @@
       return record;
     }
 
-    async function loadData(){try{const res=await fetch(DATA_URL,{cache:'no-store'});if(!res.ok)throw Error('The Apps Script endpoint could not be reached.');const payload=await res.json();if(payload&&payload.success===false)throw Error(payload.error||'The endpoint reported an error.');const rows=Array.isArray(payload)?payload:payload.data??payload.rows??payload.records??[];if(!rows.length)throw Error('Connected, but no scorecard responses were found yet.');records=rows.map(normalize);live=true;syncDates();render()}catch(e){live=false;$('demoNoticeText').textContent=`Showing sample scorecard responses. Couldn't reach the live sheet: ${e.message}`;render()}}
+    function setLoading(isLoading){const el=$('loadingNotice');if(el)el.style.display=isLoading?'flex':'none';}
+    async function loadData(){setLoading(true);try{const res=await fetch(DATA_URL,{cache:'no-store'});if(!res.ok)throw Error('The Apps Script endpoint could not be reached.');const payload=await res.json();if(payload&&payload.success===false)throw Error(payload.error||'The endpoint reported an error.');const rows=Array.isArray(payload)?payload:payload.data??payload.rows??payload.records??[];if(!rows.length)throw Error('Connected, but no scorecard responses were found yet.');records=rows.map(normalize);live=true;syncDates();render()}catch(e){live=false;$('demoNoticeText').textContent=`Showing sample scorecard responses. Couldn't reach the live sheet: ${e.message}`;render()}finally{setLoading(false)}}
     function syncDates(){const dates=records.map(r=>r.date).sort();if(!dates.length)return;if(userAdjustedRange)return;const latest=dates[dates.length-1];$('startDate').value=latest;$('endDate').value=latest}
     function filtered(){const start=$('startDate').value,end=$('endDate').value,hour=$('hourFilter').value,query=$('searchInput').value.trim().toLowerCase();return records.filter(r=>(!start||r.date>=start)&&(!end||r.date<=end)&&(hour==='all'||hour==='morning'&&r.hour>=6&&r.hour<12||hour==='afternoon'&&r.hour>=12&&r.hour<18||hour==='evening'&&r.hour>=18)&&(!query||`${r.date} ${r.time}`.toLowerCase().includes(query))).sort((a,b)=>a.date.localeCompare(b.date)||a.hour-b.hour)}
     function delta(now,previous){const diff=now-previous;if(!diff)return'<span class="muted">No change</span>';return `<span class="delta ${diff>0?'good':'warn'}">${diff>0?'+':''}${diff}</span> vs. previous`}
